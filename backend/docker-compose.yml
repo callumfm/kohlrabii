@@ -1,0 +1,33 @@
+services:
+  backend:
+    image: "backend:${TAG-latest}"
+    restart: no
+    build:
+      context: .
+    command:
+      - fastapi
+      - run
+      - --reload
+      - "app/main.py"
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./pyproject.toml
+          action: rebuild
+    environment:
+      - ENVIRONMENT=local
+      - FRONTEND_URL=${FRONTEND_URL?Variable not set}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS?Variable not set}
+      - SUPABASE_URL=${SUPABASE_URL?Variable not set}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY?Variable not set}
+      - DB_HOST=${DB_HOST?Variable not set}
+      - DB_PORT=${DB_PORT?Variable not set}
+      - DB_USER=${DB_USER?Variable not set}
+      - DB_PASS=${DB_PASS?Variable not set}
+      - DB_NAME=${DB_NAME?Variable not set}

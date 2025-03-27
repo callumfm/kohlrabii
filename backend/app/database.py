@@ -15,7 +15,9 @@ from starlette.requests import Request
 
 from app.config import config
 
-engine = create_engine(**config.DB_ENGINE_ARGS)
+engine = create_engine(
+    url=str(config.SQLALCHEMY_DATABASE_URI), **config.SQLALCHEMY_ENGINE_ARGS
+)
 
 SessionLocal = sessionmaker(bind=engine)
 

@@ -22,7 +22,11 @@ class AppConfig(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Environment = Environment.LOCAL
 
-    FRONTEND_URL: str = "http://localhost:3000"
+    # RESEND_API_KEY: str
+    SUPABASE_URL: str
+    SUPABASE_SERVICE_KEY: str
+
+    FRONTEND_URL: str
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
     ] = []
@@ -51,8 +55,8 @@ class PostgresConfig(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        return MultiHostUrl(
-            scheme="postgresql+psycopg",
+        return MultiHostUrl.build(
+            scheme="postgresql+psycopg2",
             host=self.DB_HOST,
             port=self.DB_PORT,
             username=self.DB_USER,

@@ -12,6 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
+from app.auth.api import router as auth_router
 from app.config import config
 from app.database import engine
 from app.enums import Environment
@@ -91,4 +92,6 @@ if config.ALL_CORS_ORIGINS:
 
 
 api_router = APIRouter()
+api_router.include_router(auth_router)
+
 app.include_router(api_router, prefix=config.API_V1_STR)

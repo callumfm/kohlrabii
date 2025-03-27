@@ -27,11 +27,11 @@ class Pagination(KolModel):
     total_pages: int
 
 
-class Message(KolModel):
+class Message(BaseModel):
     message: str
 
 
-class TokenPayload(KolModel):
+class TokenPayload(BaseModel):
     sub: uuid.UUID
     name: str
     email: EmailStr
