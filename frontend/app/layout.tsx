@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/react"
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -12,7 +13,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Kohlrabi",
+  title: "Kohlrabii",
   description: "The best app in the world",
 };
 
@@ -43,12 +44,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Analytics/>
           <main className="min-h-screen flex flex-col items-center">
             <div className="flex-1 w-full flex flex-col gap-20 items-center">
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>Kohlrabi</Link>
+                    <Link href={"/"}>Kohlrabii</Link>
                   </div>
                   <HeaderAuth />
                 </div>
@@ -61,7 +63,7 @@ export default function RootLayout({
                 <p>
                   Powered by{" "}
                   <p className="font-bold inline" >
-                    Kohlrabi
+                    Kohlrabii
                   </p>
                 </p>
                 <ThemeSwitcher />

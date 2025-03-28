@@ -1,7 +1,7 @@
 [project]
 name = "app"
 version = "0.1.0"
-description = "Kohlrabi full-stack web-application."
+description = "Kohlrabii full-stack web-application."
 requires-python = ">=3.10,<4.0"
 readme = "README.md"
 authors = [{ name = "Callum Macalister" }]
@@ -18,11 +18,9 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "pytest<8.0.0,>=7.4.3",
-    # "pytest-asyncio>=0.23.8",
     "mypy<2.0.0,>=1.8.0",
     "ruff<1.0.0,>=0.2.2",
     "pre-commit<4.0.0,>=3.6.2",
-    # "types-passlib<2.0.0.0,>=1.7.7.20240106",
     "coverage<8.0.0,>=7.4.3",
 ]
 
@@ -34,10 +32,6 @@ build-backend = "hatchling.build"
 plugins = ["sqlalchemy.ext.mypy.plugin"]
 strict = true
 exclude = ["venv", ".venv", "migrations"]
-
-# [[tool.mypy.overrides]]
-# module = "sqlalchemy_utils.*"
-# ignore_missing_imports = true
 
 [tool.ruff]
 target-version = "py310"
