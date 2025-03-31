@@ -62,9 +62,9 @@ export default function RootLayout({
               <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
                 <p>
                   Powered by{" "}
-                  <p className="font-bold inline" >
+                  <span className="font-bold inline" >
                     Kohlrabii
-                  </p>
+                  </span>
                 </p>
                 <ThemeSwitcher />
               </footer>
