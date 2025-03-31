@@ -14,7 +14,7 @@ from starlette.responses import Response
 
 from app.auth.api import router as auth_router
 from app.config import config
-from app.database import engine
+from app.database.core import engine
 from app.enums import Environment
 from app.logger import logger
 
@@ -31,7 +31,7 @@ _request_id_ctx_var: ContextVar[str | None] = ContextVar(
 )
 
 
-def get_request_id() -> str:
+def get_request_id() -> str | None:
     return _request_id_ctx_var.get()
 
 

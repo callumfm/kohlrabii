@@ -1,10 +1,11 @@
 import urllib.parse
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated, Any, no_type_check
 
 from pydantic import AnyUrl, BeforeValidator, computed_field
 from pydantic_core import MultiHostUrl
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.enums import Environment
 
@@ -12,13 +13,23 @@ from app.enums import Environment
 def parse_cors(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
         return [i.strip() for i in v.split(",")]
-    elif isinstance(v, list | tuple):
+    elif isinstance(v, list | str):
         return v
     raise ValueError(v)
 
 
+def get_model_config() -> SettingsConfigDict:
+    return SettingsConfigDict(
+        env_file=".env.local",
+        env_ignore_empty=True,
+        extra="ignore",
+    )
+
+
 class AppConfig(BaseSettings):
-    PROJECT_NAME: str = "kohlrabi"
+    model_config = get_model_config()
+
+    PROJECT_NAME: str = "kohlrabii"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: Environment = Environment.LOCAL
 
@@ -33,6 +44,8 @@ class AppConfig(BaseSettings):
 
     JWT_ALGORITHM: str = "HS256"
 
+    DATA_DIR: Path = Path(__file__).parent.parent / "data"
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def ALL_CORS_ORIGINS(self) -> list[str]:
@@ -41,7 +54,25 @@ class AppConfig(BaseSettings):
         ]
 
 
+class FootballConfig(BaseSettings):
+    model_config = get_model_config()
+
+    SEASONS: list[str] = [
+        "1516",
+        "1617",
+        "1718",
+        "1819",
+        "1920",
+        "2021",
+        "2122",
+        "2223",
+        "2324",
+    ]
+
+
 class PostgresConfig(BaseSettings):
+    model_config = get_model_config()
+
     DB_HOST: str
     DB_PORT: int = 5432
     DB_USER: str
@@ -54,7 +85,7 @@ class PostgresConfig(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> str:
+    def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:
         return MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             host=self.DB_HOST,
@@ -76,8 +107,8 @@ class PostgresConfig(BaseSettings):
 
 @no_type_check
 @lru_cache(maxsize=1)
-def load_config() -> AppConfig | PostgresConfig:
-    class ProdDevConfig(AppConfig, PostgresConfig):
+def load_config() -> AppConfig | FootballConfig | PostgresConfig:
+    class ProdDevConfig(AppConfig, FootballConfig, PostgresConfig):
         pass
 
     return ProdDevConfig()

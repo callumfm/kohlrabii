@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
-from gotrue.errors import AuthApiError
+from gotrue.errors import AuthApiError  # type: ignore[import-untyped]
 
 from app.auth.deps import SupabaseClient
 from app.auth.models import UserForgotPassword, UserSignIn, UserSignUp, UserUpdate

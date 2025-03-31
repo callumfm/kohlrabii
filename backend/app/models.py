@@ -13,11 +13,10 @@ class KolModel(BaseModel):
 
 
 class BaseQuery(KolModel):
-    search_query: str | None = None
     sort_by: str | None = None
     sort_desc: bool = True
-    page: int | None = Field(default=0, ge=0)
-    page_size: int | None = Field(default=10, ge=1)
+    page: int = Field(default=0, ge=0)
+    page_size: int = Field(default=10, ge=1)
 
 
 class Pagination(KolModel):
