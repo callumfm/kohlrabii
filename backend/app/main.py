@@ -12,10 +12,10 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from app.auth.api import router as auth_router
 from app.config import config
 from app.database.core import engine
 from app.enums import Environment
+from app.fixture_forecasts.api import router as fixture_forecasts_router
 from app.logger import logger
 
 app = FastAPI(
@@ -92,6 +92,6 @@ if config.ALL_CORS_ORIGINS:
 
 
 api_router = APIRouter()
-api_router.include_router(auth_router)
+api_router.include_router(fixture_forecasts_router)
 
 app.include_router(api_router, prefix=config.API_V1_STR)

@@ -1,13 +1,12 @@
 """Back-fill team performance forecasts over historical data."""
 
-from pprint import pprint
-
 import numpy as np
 import pandas as pd
 from sqlalchemy.orm import Session
 
 from app.database.core import get_session
 from app.fixture_forecasts.dixon_coles import DixonColesModel
+from app.fixture_forecasts.models import FixtureForecast
 from app.fixtures.models import Fixture
 from app.logger import logger
 from app.results.models import Result
@@ -15,7 +14,9 @@ from app.results.models import Result
 FORECAST_HORIZON = 3
 
 
-def get_train_results(session: Session, end_season: str, end_gw: int) -> list[Result]:
+def get_train_results(
+    session: Session, end_season: str, end_gw: int
+) -> dict[str, np.ndarray]:
     """Get the results for the training set."""
     logger.info("Loading train set...")
     latest_date = (
@@ -42,10 +43,11 @@ def get_train_results(session: Session, end_season: str, end_gw: int) -> list[Re
         .filter(Fixture.date <= latest_date.date)
         .all()
     )
+    logger.info(f"Train set size: {len(results)}")
 
     return {
         "date": np.array(
-            pd.to_datetime([r.date for r in results], format="mixed").date,
+            pd.to_datetime([r.date for r in results], format="mixed", utc=True),
             dtype="datetime64[D]",
         ),
         "home_team": np.array([r.home_team for r in results]),
@@ -60,9 +62,9 @@ def get_test_fixtures(
 ) -> list[Fixture]:
     """Get the fixtures for the test set."""
     logger.info("Loading test set...")
-    return (
+    fixtures = (
         session.query(
-            Fixture.date,
+            Fixture.fixture_id,
             Fixture.home_team,
             Fixture.away_team,
         )
@@ -71,6 +73,8 @@ def get_test_fixtures(
         .limit(horizon)
         .all()
     )
+    logger.info(f"Test set size: {len(fixtures)}")
+    return fixtures
 
 
 def fill_fixture_forecasts(
@@ -95,14 +99,16 @@ def fill_fixture_forecasts(
     model.fit()
     for fixture in test:
         yhat = model.predict(fixture.home_team, fixture.away_team)
-        pprint(yhat)
+        ff = FixtureForecast(fixture_id=fixture.fixture_id, **yhat)
+        session.add(ff)
+    session.commit()
 
 
 if __name__ == "__main__":
     with get_session() as session:
         fill_fixture_forecasts(
             session=session,
-            split_gameweek=5,
-            split_season="1819",
+            split_gameweek=19,
+            split_season="2324",
             horizon=3,
         )

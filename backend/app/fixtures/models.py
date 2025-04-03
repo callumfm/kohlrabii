@@ -7,6 +7,7 @@ from app.database.core import Base
 from app.models import BaseQuery, KolModel, Pagination
 
 if TYPE_CHECKING:
+    from app.fixture_forecasts.models import FixtureForecast
     from app.results.models import Result
 
 
@@ -26,6 +27,9 @@ class Fixture(Base):
 
     result: Mapped["Result"] = relationship(
         "Result", uselist=False, back_populates="fixture"
+    )
+    forecast: Mapped["FixtureForecast"] = relationship(
+        "FixtureForecast", uselist=False, back_populates="fixture"
     )
 
     def __str__(self) -> str:

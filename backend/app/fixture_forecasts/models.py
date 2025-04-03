@@ -1,53 +1,64 @@
-from datetime import date
-from typing import TypeAlias
+from typing import TYPE_CHECKING
 
-import numpy as np
-import pandas as pd
-from pydantic import BaseModel
+from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy.orm import Mapped, relationship
 
-from app.models import KolModel
+from app.database.core import Base
+from app.fixtures.models import FixtureRead
+from app.models import BaseQuery, KolModel, Pagination
 
-ForecastResult: TypeAlias = dict[str, dict[date, dict[str, str | float]]]
-
-
-class TeamModelParams(KolModel):
-    """Team model parameters."""
-
-    team: np.ndarray[str]
-    attack: np.ndarray[float]
-    defence: np.ndarray[float]
-    beta_atk: np.ndarray[float] | None
-    beta_def: np.ndarray[float] | None
-    home_adv: float
-    rho: float
-
-    def to_df(self) -> pd.DataFrame:
-        """Convert class instance to dataframe."""
-        return pd.DataFrame(self.model_dump())
+if TYPE_CHECKING:
+    from app.fixtures.models import Fixture
 
 
-class TeamForecast(BaseModel):
-    """Forecast results for a single team."""
+class FixtureForecast(Base):
+    __tablename__ = "fixture_forecasts"
 
-    was_home: bool
-    win: float
-    clean_sheet: float
-    goals_for: float
-    attack: float
-    defence: float
+    forecast_id: int = Column(Integer, primary_key=True, autoincrement=True)
+    fixture_id: int = Column(Integer, ForeignKey("fixture.fixture_id"))
+    home_win: float = Column(Float, nullable=False)
+    away_win: float = Column(Float, nullable=False)
+    home_clean_sheet: float = Column(Float, nullable=False)
+    away_clean_sheet: float = Column(Float, nullable=False)
+    home_goals_for: float = Column(Float, nullable=False)
+    away_goals_for: float = Column(Float, nullable=False)
+    home_attack: float = Column(Float, nullable=False)
+    away_attack: float = Column(Float, nullable=False)
+    home_defence: float = Column(Float, nullable=False)
+    away_defence: float = Column(Float, nullable=False)
 
-    def __post_init__(self) -> None:
-        """Round float fields to 3 decimal places."""
-        for field in self.model_fields:
-            value = getattr(self, field)
-            if isinstance(value, float):
-                setattr(self, field, round(value, 3))
+    fixture: Mapped["Fixture"] = relationship(
+        "Fixture", uselist=False, back_populates="forecast"
+    )
+
+    def __str__(self) -> str:
+        return (
+            f"{self.fixture.season} GW{self.fixture.gameweek} "
+            f"{self.fixture.home_team} {self.home_goals_for} - "
+            f"{self.away_goals_for} {self.fixture.away_team}"
+        )
 
 
-class MatchForecast(BaseModel):
-    """Forecast results for a single match."""
+class FixtureForecastQuery(BaseQuery):
+    season: str | None = None
+    gameweek: int | None = None
+    date: str | None = None
+    team: str | None = None
 
-    home_team: str
-    away_team: str
-    home_forecast: TeamForecast
-    away_forecast: TeamForecast
+
+class FixtureForecastRead(KolModel):
+    home_win: float
+    away_win: float
+    home_clean_sheet: float
+    away_clean_sheet: float
+    home_goals_for: float
+    away_goals_for: float
+    fixture: FixtureRead
+
+
+class FixtureForecastReadPagination(Pagination):
+    items: list[FixtureForecastRead]
+
+
+class FixtureForecastUpdate(KolModel):
+    pass

@@ -1,15 +1,18 @@
 """Dixon-Coles team strength model."""
 
+import datetime as dt
 import warnings
 from collections.abc import Callable
-from datetime import datetime
+from typing import TypeAlias
 
 import numpy as np
 from numba import njit, vectorize
 from scipy.optimize import OptimizeResult, minimize
 
-from app.fixture_forecasts.models import MatchForecast, TeamForecast, TeamModelParams
 from app.logger import logger
+
+ForecastResult: TypeAlias = dict[str, dict[dt.date, dict[str, str | float]]]
+TeamModelParams: TypeAlias = dict[str, float | np.ndarray[float] | None]
 
 
 class DixonColesModel:
@@ -24,8 +27,7 @@ class DixonColesModel:
         away_team: np.ndarray[str],
         home_goals: np.ndarray[int],
         away_goals: np.ndarray[int],
-        date: np.ndarray[datetime.date],
-        covariates: np.ndarray[float] | None = None,
+        date: np.ndarray[dt.date],
     ):
         """Initialise model with fixtures and team-level covariates."""
         self.home_teams = home_team
@@ -34,13 +36,8 @@ class DixonColesModel:
         self.away_goals = away_goals
 
         self.weights = time_decay(date, xi=self.xi)
-
         self.teams = np.unique(np.concatenate((self.home_teams, self.away_teams)))
         self.n_teams = len(self.teams)
-
-        self.covariates = covariates
-        if self.covariates is not None and self.covariates.shape[0] != self.n_teams:
-            raise ValueError("Shape of covariates must match n teams")
 
         self._params: np.ndarray = self._init_params()
         self._res: OptimizeResult | None = None
@@ -51,17 +48,11 @@ class DixonColesModel:
 
     def _init_params(self) -> np.ndarray[int | float]:
         """Initialise empty parameters."""
-        team_atk = [1] * self.n_teams
-        team_def = [-1] * self.n_teams
+        team_atk = np.random.uniform(0.5, 1.5, (self.n_teams))
+        team_def = np.random.uniform(-1.5, -0.5, (self.n_teams))
         home_adv = [0.25]
         rho = [-0.1]
-
-        if self.covariates is None:
-            return np.concatenate((team_atk, team_def, home_adv, rho))
-
-        beta_att = [0] * self.n_teams
-        beta_def = [0] * self.n_teams
-        return np.concatenate((team_atk, team_def, beta_att, beta_def, home_adv, rho))
+        return np.concatenate((team_atk, team_def, home_adv, rho))
 
     @property
     def constraints(self) -> dict[str, str | Callable]:
@@ -75,11 +66,7 @@ class DixonColesModel:
         team_def = [(-3, 0)] * self.n_teams
         home_adv = [(0, 2)]
         rho = [(-2, 2)]
-
-        if self.covariates is None:
-            return team_atk + team_def + home_adv + rho
-
-        return team_atk + team_def + team_atk + team_def + home_adv + rho
+        return team_atk + team_def + home_adv + rho
 
     def fit(self) -> None:
         """Fits the model to the data, calculating the team strengths, home advantage and intercept."""
@@ -110,66 +97,84 @@ class DixonColesModel:
         """Model fit iteration."""
         params = self.get_model_params(params)
 
-        home_team_indices = np.searchsorted(params.team, self.home_teams)
-        away_team_indices = np.searchsorted(params.team, self.away_teams)
+        home_team_indices = np.searchsorted(params["team"], self.home_teams)
+        away_team_indices = np.searchsorted(params["team"], self.away_teams)
 
-        home_atk = params.attack[home_team_indices]
-        home_def = params.defence[home_team_indices]
-        away_atk = params.attack[away_team_indices]
-        away_def = params.defence[away_team_indices]
+        home_atk = params["attack"][home_team_indices]
+        home_def = params["defence"][home_team_indices]
+        away_atk = params["attack"][away_team_indices]
+        away_def = params["defence"][away_team_indices]
 
-        home_exp = np.exp(params.home_adv + home_atk + away_def)
-        away_exp = np.exp(away_atk + home_def)
+        home_exp, away_exp = expected_goals(
+            home_atk=home_atk,
+            away_atk=away_atk,
+            home_def=home_def,
+            away_def=away_def,
+            home_adv=params["home_adv"],
+        )
 
         home_llk = poisson_logpmf(self.home_goals, home_exp)
         away_llk = poisson_logpmf(self.away_goals, away_exp)
 
         dc_adj = rho_correction(
-            self.home_goals, self.away_goals, home_exp, away_exp, params.rho
+            home_goals=self.home_goals,
+            away_goals=self.away_goals,
+            home_exp=home_exp,
+            away_exp=away_exp,
+            rho=params["rho"],
         )
+
         llk = (home_llk + away_llk + np.log(dc_adj)) * self.weights
 
         return -np.sum(llk)
 
-    def predict(self, home_team: str, away_team: str) -> MatchForecast:
+    def predict(self, home_team: str, away_team: str) -> dict[str, str | float]:
         """Predicts the probabilities of the different possible match outcomes."""
         if not self.fitted:
             raise ValueError(
                 "Model params not fitted, please call `fit()` before predicting values"
             )
 
+        logger.info(f"Predicting fixture: {home_team} vs {away_team}")
+
         params = self.get_model_params()
         home_atk, home_def = self.get_team_strength(home_team)
         away_atk, away_def = self.get_team_strength(away_team)
         home_goal_exp, away_goal_exp = expected_goals(
-            home_atk, away_atk, home_def, away_def, params.home_adv
+            home_atk=home_atk,
+            away_atk=away_atk,
+            home_def=home_def,
+            away_def=away_def,
+            home_adv=params["home_adv"],
         )
 
-        m = joint_probability_matrix(home_goal_exp, away_goal_exp)
-        m = low_scoreline_correction(m, home_goal_exp, away_goal_exp, params.rho)
-
-        results = MatchForecast(
-            home_team=home_team,
-            away_team=away_team,
-            home_forecast=TeamForecast(
-                was_home=True,
-                win=np.sum(np.tril(m, -1)),
-                clean_sheet=m[:, 0].sum(),
-                goals_for=home_goal_exp,
-                attack=home_atk,
-                defence=home_def,
-            ),
-            away_forecast=TeamForecast(
-                was_home=False,
-                win=np.sum(np.triu(m, 1)),
-                clean_sheet=m[0, :].sum(),
-                goals_for=away_goal_exp,
-                attack=away_atk,
-                defence=away_def,
-            ),
+        m = joint_probability_matrix(
+            home_goal_exp=home_goal_exp, away_goal_exp=away_goal_exp
+        )
+        m = low_scoreline_correction(
+            m=m,
+            home_goal_exp=home_goal_exp,
+            away_goal_exp=away_goal_exp,
+            rho=params["rho"],
         )
 
-        return results
+        results = {
+            "home_win": np.sum(np.tril(m, -1)),
+            "away_win": np.sum(np.triu(m, 1)),
+            "home_clean_sheet": m[:, 0].sum(),
+            "away_clean_sheet": m[0, :].sum(),
+            "home_goals_for": home_goal_exp,
+            "away_goals_for": away_goal_exp,
+            "home_attack": home_atk,
+            "away_attack": away_atk,
+            "home_defence": home_def,
+            "away_defence": away_def,
+        }
+
+        return {
+            k: float(round(v, 4)) if isinstance(v, float) else v
+            for k, v in results.items()
+        }
 
     def evaluate(
         self,
@@ -201,22 +206,13 @@ class DixonColesModel:
     ) -> TeamModelParams:
         """Labelled parameters dictionary."""
         params_list = params_list if params_list is not None else self._params
-        params: TeamModelParams = TeamModelParams(
-            team=self.teams,
-            attack=params_list[: self.n_teams],
-            defence=params_list[self.n_teams : 2 * self.n_teams],
-            beta_atk=None,
-            beta_def=None,
-            home_adv=params_list[-2],
-            rho=params_list[-1],
-        )
-
-        if self.covariates is not None:
-            params.beta_atk = params_list[-(2 + self.n_teams * 2) : -(2 + self.n_teams)]
-            params.beta_def = params_list[-(2 + self.n_teams) : -2]
-            params = self._adjust_covariate_strengths(params)
-
-        return params
+        return {
+            "team": self.teams,
+            "attack": params_list[: self.n_teams],
+            "defence": params_list[self.n_teams : 2 * self.n_teams],
+            "home_adv": params_list[-2],
+            "rho": params_list[-1],
+        }
 
     def get_all_team_strengths(self) -> dict[str, dict[str, float]]:
         """Get a dictionary of team to attack and defence strengths as fitted by the model."""
@@ -243,25 +239,6 @@ class DixonColesModel:
         mean_atk = np.percentile(attack, 0.4)
         mean_def = np.percentile(defence, 0.4)
         return mean_atk, mean_def
-
-    def _adjust_covariate_strengths(self, params: TeamModelParams) -> TeamModelParams:
-        """Adjust strengths based on covariates."""
-        if self.covariates is None:
-            return params
-
-        params_df = params.to_df()
-        teams = params_df["team"].unique()
-        for team in teams:
-            beta_atk = params_df.loc[params_df.team == team, "beta_atk"]
-            beta_def = params_df.loc[params_df.team == team, "beta_def"]
-            params_df.loc[params_df.team == team, "attack"] += np.dot(
-                self.covariates[team], beta_atk
-            )
-            params_df.loc[params_df.team == team, "defence"] += np.dot(
-                self.covariates[team], beta_def
-            )
-
-        return TeamModelParams(**params_df.to_dict())
 
 
 @njit
@@ -296,10 +273,11 @@ def low_scoreline_correction(
     m[0, 1] *= 1 + home_goal_exp * rho
     m[1, 0] *= 1 + home_goal_exp * rho
     m[1, 1] *= 1 - rho
+    m /= m.sum()
     return m
 
 
-def time_decay(dates: np.ndarray[datetime.date], xi: float) -> np.ndarray[float]:
+def time_decay(dates: np.ndarray[dt.date], xi: float) -> np.ndarray[float]:
     """Exponentially decay fixtures so that old ones influence the current strength less."""
     return np.exp(-xi * (dates.max() - dates).astype(int))
 
@@ -330,9 +308,9 @@ def joint_probability_matrix(
 
 @njit
 def expected_goals(
-    home_atk: float, away_atk: float, home_def: float, away_def: float, rho: float
+    home_atk: float, away_atk: float, home_def: float, away_def: float, home_adv: float
 ) -> tuple[float, float]:
     """Get the home and away goal expectation."""
-    home_goal_exp = np.exp(home_atk + away_def + rho)
+    home_goal_exp = np.exp(home_atk + away_def + home_adv)
     away_goal_exp = np.exp(away_atk + home_def)
     return home_goal_exp, away_goal_exp
