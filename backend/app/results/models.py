@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 from app.database.core import Base
 
@@ -17,7 +17,9 @@ class Result(Base):
     home_score: int = Column(Integer, nullable=False)
     away_score: int = Column(Integer, nullable=False)
 
-    fixture: "Fixture" = relationship("Fixture", uselist=False, back_populates="result")
+    fixture: Mapped["Fixture"] = relationship(
+        "Fixture", uselist=False, back_populates="result"
+    )
 
     def __str__(self) -> str:
         return (

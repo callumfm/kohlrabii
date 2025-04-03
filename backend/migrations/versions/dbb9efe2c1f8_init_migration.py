@@ -35,13 +35,11 @@ def upgrade() -> None:
     sa.Column('date', sa.String(length=100), nullable=True),
     sa.Column('season', sa.String(length=100), nullable=False),
     sa.Column('gameweek', sa.Integer(), nullable=True),
-    sa.Column('home_team_id', sa.Integer(), nullable=False),
-    sa.Column('away_team_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['away_team_id'], ['teams.id'], ),
-    sa.ForeignKeyConstraint(['home_team_id'], ['teams.id'], ),
+    sa.Column('home_team', sa.String(length=100), nullable=False),
+    sa.Column('away_team', sa.String(length=100), nullable=False),
     sa.PrimaryKeyConstraint('fixture_id'),
-    sa.UniqueConstraint('away_team_id', 'date', name='uix_away_team_date'),
-    sa.UniqueConstraint('home_team_id', 'date', name='uix_home_team_date')
+    sa.UniqueConstraint('away_team', 'date', name='uix_away_team_date'),
+    sa.UniqueConstraint('home_team', 'date', name='uix_home_team_date')
     )
     op.create_table('result',
     sa.Column('result_id', sa.Integer(), autoincrement=True, nullable=False),

@@ -8,10 +8,12 @@ authors = [{ name = "Callum Macalister" }]
 dependencies = [
     "alembic>=1.15.1",
     "fastapi[standard]>=0.115.12",
+    "numba>=0.61.0",
     "pandas>=2.2.3",
     "psycopg2-binary>=2.9.10",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.1",
+    "scipy>=1.15.2",
     "sqlalchemy>=2.0.39",
     "supabase>=2.14.0",
 ]

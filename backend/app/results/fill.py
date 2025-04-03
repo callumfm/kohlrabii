@@ -44,7 +44,7 @@ def make_results_table(seasons: list[str], session: Session) -> None:
         logger.info(f"Filling {season} season")
         season_fixtures = get_seasons_fixtures(session=session, season=season)
         fixture_id_map: FixtureMap = {
-            (f.home_team.name, f.away_team.name): f.fixture_id for f in season_fixtures
+            (f.home_team, f.away_team): f.fixture_id for f in season_fixtures
         }
         fill_results_table_from_file(
             session=session, season=season, fixture_id_map=fixture_id_map
