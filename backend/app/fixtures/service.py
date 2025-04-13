@@ -2,7 +2,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.fixtures.models import Fixture, FixtureCreate, FixtureUpdate
-from app.teams.service import get_team_from_name
+from app.teams.service import get_team_from_id
 
 
 def get_fixture(
@@ -14,42 +14,36 @@ def get_fixture(
     was_home: bool | None,
     other_team: str | None,
 ) -> Fixture:
-    if isinstance(team, str):
-        team_id = get_team_from_name(session=session, season=season, name=team).id
-    else:
-        team_id = team
+    if isinstance(team, int):
+        team = get_team_from_id(session=session, season=season, team_id=team).name
 
     query = session.query(Fixture).filter_by(season=season)
     if gameweek:
         query = query.filter_by(gameweek=gameweek)
     if was_home is True:
-        query = query.filter_by(home_team_id=team_id)
+        query = query.filter_by(home_team=team)
     elif was_home is False:
-        query = query.filter_by(away_team_id=team_id)
+        query = query.filter_by(away_team=team)
     elif was_home is None:
-        query = query.filter(
-            or_(Fixture.away_team_id == team_id, Fixture.home_team_id == team_id)
-        )
+        query = query.filter(or_(Fixture.away_team == team, Fixture.home_team == team))
     else:
         raise ValueError("was_home must be True, False or None")
 
     if other_team:
         if isinstance(other_team, str):
-            other_team_id = get_team_from_name(
-                session=session, season=season, name=other_team
-            ).id
-        else:
-            other_team_id = other_team
+            other_team = get_team_from_id(
+                session=session, season=season, team_id=other_team
+            ).name
 
         if was_home is True:
-            query = query.filter_by(away_team_id=other_team_id)
+            query = query.filter_by(away_team=other_team)
         elif was_home is False:
-            query = query.filter_by(home_team_id=other_team_id)
+            query = query.filter_by(home_team=other_team)
         elif was_home is None:
             query = query.filter(
                 or_(
-                    Fixture.away_team_id == other_team_id,
-                    Fixture.home_team_id == other_team_id,
+                    Fixture.away_team == other_team,
+                    Fixture.home_team == other_team,
                 )
             )
 

@@ -1,7 +1,11 @@
 """Back-fill team performance forecasts over historical data."""
 
+from typing import TypeAlias
+
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
+from sqlalchemy import Row
 from sqlalchemy.orm import Session
 
 from app.database.core import get_session
@@ -13,10 +17,12 @@ from app.results.models import Result
 
 FORECAST_HORIZON = 3
 
+TrainResults: TypeAlias = dict[
+    str, npt.NDArray[np.datetime64] | npt.NDArray[np.float64] | npt.NDArray[np.str_]
+]
 
-def get_train_results(
-    session: Session, end_season: str, end_gw: int
-) -> dict[str, np.ndarray]:
+
+def get_train_results(session: Session, end_season: str, end_gw: int) -> TrainResults:
     """Get the results for the training set."""
     logger.info("Loading train set...")
     latest_date = (
@@ -59,7 +65,7 @@ def get_train_results(
 
 def get_test_fixtures(
     session: Session, season: str, start_gw: int, horizon: int | None = None
-) -> list[Fixture]:
+) -> list[Row[tuple[int, str, str]]]:
     """Get the fixtures for the test set."""
     logger.info("Loading test set...")
     fixtures = (
@@ -84,6 +90,12 @@ def fill_fixture_forecasts(
     horizon: int = FORECAST_HORIZON,
 ) -> None:
     """Back-fill team performance forecasts over historical data."""
+    # TODO: Get latest gameweek and season
+    if not split_gameweek:
+        split_gameweek = 1
+    if not split_season:
+        split_season = "2324"
+
     train = get_train_results(
         session=session,
         end_season=split_season,
@@ -95,11 +107,11 @@ def fill_fixture_forecasts(
         start_gw=split_gameweek,
         horizon=horizon,
     )
-    model = DixonColesModel(**train)
+    model = DixonColesModel(**train)  # type: ignore[arg-type]
     model.fit()
     for fixture in test:
-        yhat = model.predict(fixture.home_team, fixture.away_team)
-        ff = FixtureForecast(fixture_id=fixture.fixture_id, **yhat)
+        yhat = model.predict(home_team=fixture.home_team, away_team=fixture.away_team)
+        ff = FixtureForecast(fixture_id=fixture.fixture_id, **yhat)  # type: ignore
         session.add(ff)
     session.commit()
 

@@ -6,10 +6,10 @@ from app.teams.models import Team
 
 
 @lru_cache(maxsize=20)
-def get_team_from_name(*, session: Session, season: str, name: str) -> Team:
-    team = session.query(Team).filter(Team.name == name, Team.season == season).first()
+def get_team_from_id(*, session: Session, season: str, team_id: int) -> Team:
+    team = session.query(Team).filter(Team.id == team_id, Team.season == season).first()
     if not team:
-        raise ValueError(f"'{name}' is not a valid team for the {season} season")
+        raise ValueError(f"'{team_id}' is not a valid team for the {season} season")
     return team
 
 

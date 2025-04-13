@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import fetcher from "./fetch"
 import type { TFetchProps } from "./types"
+import camelcaseKeys from "camelcase-keys"
 
 const instance = async (params: TFetchProps) => {
 
@@ -14,7 +15,7 @@ const instance = async (params: TFetchProps) => {
         redirect("/api/auth/signin")
     }
 
-    return results
+    return camelcaseKeys(results, { deep: true })
 }
 
 export default instance;

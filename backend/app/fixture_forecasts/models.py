@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Float, ForeignKey, Integer
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy import Float, ForeignKey, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.core import Base
 from app.fixtures.models import FixtureRead
@@ -14,18 +14,20 @@ if TYPE_CHECKING:
 class FixtureForecast(Base):
     __tablename__ = "fixture_forecasts"
 
-    forecast_id: int = Column(Integer, primary_key=True, autoincrement=True)
-    fixture_id: int = Column(Integer, ForeignKey("fixture.fixture_id"))
-    home_win: float = Column(Float, nullable=False)
-    away_win: float = Column(Float, nullable=False)
-    home_clean_sheet: float = Column(Float, nullable=False)
-    away_clean_sheet: float = Column(Float, nullable=False)
-    home_goals_for: float = Column(Float, nullable=False)
-    away_goals_for: float = Column(Float, nullable=False)
-    home_attack: float = Column(Float, nullable=False)
-    away_attack: float = Column(Float, nullable=False)
-    home_defence: float = Column(Float, nullable=False)
-    away_defence: float = Column(Float, nullable=False)
+    forecast_id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True
+    )
+    fixture_id: Mapped[int] = mapped_column(Integer, ForeignKey("fixture.fixture_id"))
+    home_win: Mapped[float] = mapped_column(Float, nullable=False)
+    away_win: Mapped[float] = mapped_column(Float, nullable=False)
+    home_clean_sheet: Mapped[float] = mapped_column(Float, nullable=False)
+    away_clean_sheet: Mapped[float] = mapped_column(Float, nullable=False)
+    home_goals_for: Mapped[float] = mapped_column(Float, nullable=False)
+    away_goals_for: Mapped[float] = mapped_column(Float, nullable=False)
+    home_attack: Mapped[float] = mapped_column(Float, nullable=False)
+    away_attack: Mapped[float] = mapped_column(Float, nullable=False)
+    home_defence: Mapped[float] = mapped_column(Float, nullable=False)
+    away_defence: Mapped[float] = mapped_column(Float, nullable=False)
 
     fixture: Mapped["Fixture"] = relationship(
         "Fixture", uselist=False, back_populates="forecast"
