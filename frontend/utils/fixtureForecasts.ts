@@ -9,7 +9,7 @@ const _getFixtureForecasts = async (
   params?: TParams,
 ): Promise<schemas['FixtureForecastReadPagination']> => {
   return unwrap(
-    api.GET('/fixtures/forecasts', {
+    api.GET('/api/v1/fixtures/forecasts', {
       params: {
         query: {
             ...params,
