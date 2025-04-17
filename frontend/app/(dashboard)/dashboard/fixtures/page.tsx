@@ -1,12 +1,14 @@
 import FixturesContent from "./content"
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { gameweek?: string; season?: string }
+export default async function Page(props: {
+  searchParams?: Promise<{
+    gameweek?: string
+    season?: string
+  }>
 }) {
-  const gameweek = searchParams.gameweek ? parseInt(searchParams.gameweek) : 38
-  const season = searchParams.season || "2324"
+  const searchParams = await props.searchParams;
+  const gameweek = Number(searchParams?.gameweek) || 38;
+  const season = searchParams?.season || "2324";
 
   return (
     <FixturesContent
