@@ -1,30 +1,30 @@
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import or_
 
 from app.database.core import SessionDep
 from app.database.utils import sort_and_paginate
-from app.fixtures.forecasts.models import (
-    FixtureForecast,
-    FixtureForecastQuery,
-    FixtureForecastReadPagination,
+from app.fixtures.models import (
+    Fixture,
+    FixtureQuery,
+    FixtureRead,
+    FixtureReadPagination,
 )
-from app.fixtures.models import Fixture
 
 router = APIRouter(prefix="/fixtures", tags=["fixtures"])
 
 
-@router.get("/forecasts", response_model=FixtureForecastReadPagination)
-def get_fixture_forecasts_query(
-    *, session: SessionDep, query_in: FixtureForecastQuery = Depends()
+@router.get("/", response_model=FixtureReadPagination)
+def get_fixtures_query(
+    *, session: SessionDep, query_in: FixtureQuery = Depends()
 ) -> Any:
-    query = session.query(FixtureForecast).join(Fixture.forecast)
+    query = session.query(Fixture)
     if query_in.season:
-        query = query.filter(Fixture.season == query_in.season)
+        query = query.filter_by(season=query_in.season)
 
     if query_in.gameweek:
-        query = query.filter(Fixture.gameweek == query_in.gameweek)
+        query = query.filter_by(gameweek=query_in.gameweek)
 
     if query_in.team:
         query = query.filter(
@@ -35,13 +35,18 @@ def get_fixture_forecasts_query(
         )
 
     if query_in.date:
-        query = query.filter(Fixture.date == query_in.date)
+        query = query.filter_by(date=query_in.date)
 
-    pagination = sort_and_paginate(
+    return sort_and_paginate(
         query=query,
-        table=FixtureForecast,
+        table=Fixture,
         query_in=query_in,
     )
-    # pagination["gameweek"] = query_in.gameweek
-    # pagination["season"] = query_in.season
-    return pagination
+
+
+@router.get("/{fixture_id}", response_model=FixtureRead)
+def get_fixture(*, session: SessionDep, fixture_id: int) -> Any:
+    fixture = session.get(Fixture, fixture_id)
+    if not fixture:
+        raise HTTPException(status_code=404, detail=f"Fixture {fixture_id} not found")
+    return fixture

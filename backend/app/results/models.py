@@ -4,6 +4,7 @@ from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.core import Base
+from app.models import KolModel
 
 if TYPE_CHECKING:
     from app.fixtures.models import Fixture
@@ -29,3 +30,8 @@ class Result(Base):
             f"{self.fixture.home_team} {self.home_score} - "
             f"{self.away_score} {self.fixture.away_team}"
         )
+
+
+class ResultRead(KolModel):
+    home_score: int
+    away_score: int

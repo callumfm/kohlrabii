@@ -4,12 +4,12 @@ import { cache } from 'react'
 
 import { type TParams } from "@/utils/fetch"
 
-const _getFixtureForecasts = async (
+const _getFixtures = async (
   api: Client,
   params?: TParams,
-): Promise<schemas['FixtureForecastReadPagination']> => {
+): Promise<schemas['FixtureReadPagination']> => {
   return unwrap(
-    api.GET('/api/v1/fixtures/forecasts', {
+    api.GET('/api/v1/fixtures/', {
       params: {
         query: {
             ...params,
@@ -24,4 +24,4 @@ const _getFixtureForecasts = async (
 }
 
 // Tell React to memoize it for the duration of the request
-export const getFixtureForecasts = cache(_getFixtureForecasts)
+export const getFixtures = cache(_getFixtures)

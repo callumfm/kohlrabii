@@ -4,7 +4,10 @@ from sqlalchemy import Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.core import Base
+from app.fixtures.forecasts.models import FixtureForecastRead
 from app.models import BaseQuery, KolModel, Pagination
+from app.results.models import ResultRead
+from app.validations import Gameweek
 
 if TYPE_CHECKING:
     from app.fixtures.forecasts.models import FixtureForecast
@@ -40,12 +43,14 @@ class Fixture(Base):
 
 class FixtureQuery(BaseQuery):
     season: str | None = None
+    gameweek: int | None = Gameweek
+    date: str | None = None
     team: str | None = None
 
 
 class FixtureCreate(KolModel):
     date: str | None = None
-    gameweek: int | None = None
+    gameweek: int | None = Gameweek
     home_team: str
     away_team: str
     season: str
@@ -53,15 +58,18 @@ class FixtureCreate(KolModel):
 
 class FixtureUpdate(KolModel):
     date: str | None = None
-    gameweek: int | None = None
+    gameweek: int | None = Gameweek
 
 
 class FixtureRead(KolModel):
+    fixture_id: int
     date: str | None
     gameweek: int | None
+    season: str
     home_team: str
     away_team: str
-    season: str
+    result: ResultRead | None
+    forecast: FixtureForecastRead | None
 
 
 class FixtureReadPagination(Pagination):

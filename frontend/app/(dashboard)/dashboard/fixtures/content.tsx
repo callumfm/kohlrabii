@@ -1,55 +1,78 @@
 "use client"
 
-import { type FC, useMemo, useState } from "react"
-import { useFixtureForecasts } from "@/hooks/queries/fixtureForecasts"
+import { type FC, useState, Suspense } from "react"
+import { useFixtures } from "@/hooks/queries/fixtures"
 import { schemas } from "@/utils/api/client"
 import GameweekResults from "@/components/Results/GameweekResults"
 import GameweekSelector from "@/components/Results/GameweekSelector"
+import GameweekResultsSkeleton from "@/components/Results/GameweekResultsSkeleton"
+import { useDebouncedCallback } from "use-debounce"
+import { useSearchParams, usePathname, useRouter } from "next/navigation"
 
-type TFixturesPageProps = {
-  forecasts: schemas['FixtureForecastReadPagination']
+type TFixturesProps = {
+  gameweek: number
+  season: string
 }
 
-const FixturesContent: FC<TFixturesPageProps> = ({
-  forecasts,
-}) => {
-  const [currentGameweek, setCurrentGameweek] = useState<number>(38)
-
-  const queryParams = useMemo(() => ({
-    gameweek: currentGameweek,
-  }), [currentGameweek])
-
-  const { data, isLoading } = useFixtureForecasts(queryParams, {
-    initialData: forecasts
-  })
-
-  const forecastItems = useMemo(
-    () => data?.items ?? [],
-    [data]
+const ResultsContent = ({ gameweek, season }: TFixturesProps) => {
+  const { data } = useFixtures(
+    { gameweek, season },
+    { suspense: true }
   )
+
+  const fixturesData = (data as schemas["FixtureReadPagination"])?.items ?? []
+
+  if (fixturesData.length === 0) {
+    return (
+      <div className="text-center py-10 text-muted-foreground">
+        No fixtures found for Gameweek {gameweek} {season ? `in season ${season}` : ""}
+      </div>
+    )
+  }
+
+  return <GameweekResults fixtures={fixturesData} />
+}
+
+const FixturesContent: FC<TFixturesProps> = ({ gameweek, season }) => {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
+
+  const initialGameweek = Number(searchParams.get('gameweek')) || gameweek
+  const initialSeason = searchParams.get('season') || season
+
+  const [selectedGameweek, setSelectedGameweek] = useState<number>(initialGameweek)
+  const [currentGameweek, setCurrentGameweek] = useState<number>(initialGameweek)
+  const [currentSeason, setCurrentSeason] = useState<string>(initialSeason)
+
+  const updateURL = useDebouncedCallback((gw: number, season: string) => {
+    setCurrentGameweek(gw)
+    const params = new URLSearchParams(searchParams)
+    params.set("gameweek", gw.toString())
+    params.set("season", season)
+    replace(`${pathname}?${params.toString()}`)
+  }, 300)
+
+  const handleGameweekChange = (value: number) => {
+    setSelectedGameweek(value)
+    updateURL(value, currentSeason)
+  }
 
   return (
     <div className="container py-6">
       <div className="mb-6">
         <GameweekSelector
-          currentGameweek={currentGameweek}
-          onChange={(value) => setCurrentGameweek(value)}
+          currentGameweek={selectedGameweek}
+          onChange={handleGameweekChange}
         />
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-10 text-muted-foreground">
-          Loading matches...
-        </div>
-      ) : (
-        forecastItems.length > 0 ? (
-          <GameweekResults matches={forecastItems} />
-        ) : (
-          <div className="text-center py-10 text-muted-foreground">
-            No matches found for Gameweek {currentGameweek}
-          </div>
-        )
-      )}
+      <Suspense fallback={<GameweekResultsSkeleton />}>
+        <ResultsContent
+          gameweek={currentGameweek}
+          season={currentSeason}
+        />
+      </Suspense>
     </div>
   )
 }

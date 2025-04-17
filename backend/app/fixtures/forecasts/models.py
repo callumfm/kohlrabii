@@ -4,8 +4,7 @@ from sqlalchemy import Float, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.core import Base
-from app.fixtures.models import FixtureRead
-from app.models import BaseQuery, KolModel, Pagination
+from app.models import KolModel
 
 if TYPE_CHECKING:
     from app.fixtures.models import Fixture
@@ -41,13 +40,6 @@ class FixtureForecast(Base):
         )
 
 
-class FixtureForecastQuery(BaseQuery):
-    season: str | None = None
-    gameweek: int | None = None
-    date: str | None = None
-    team: str | None = None
-
-
 class FixtureForecastRead(KolModel):
     home_win: float
     away_win: float
@@ -55,14 +47,3 @@ class FixtureForecastRead(KolModel):
     away_clean_sheet: float
     home_goals_for: float
     away_goals_for: float
-    fixture: FixtureRead
-
-
-class FixtureForecastReadPagination(Pagination):
-    items: list[FixtureForecastRead]
-    # gameweek: int
-    # season: str
-
-
-class FixtureForecastUpdate(KolModel):
-    pass

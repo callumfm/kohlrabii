@@ -4,15 +4,32 @@
  */
 
 export interface paths {
-    "/api/v1/fixtures/forecasts": {
+    "/api/v1/fixtures/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Fixture Forecasts Query */
-        get: operations["fixtures_get_fixture_forecasts_query"];
+        /** Get Fixtures Query */
+        get: operations["fixtures_get_fixtures_query"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fixtures/{fixture_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Fixture */
+        get: operations["fixtures_get_fixture"];
         put?: never;
         post?: never;
         delete?: never;
@@ -39,10 +56,26 @@ export interface components {
             home_goals_for: number;
             /** Away Goals For */
             away_goals_for: number;
-            fixture: components["schemas"]["FixtureRead"];
         };
-        /** FixtureForecastReadPagination */
-        FixtureForecastReadPagination: {
+        /** FixtureRead */
+        FixtureRead: {
+            /** Fixture Id */
+            fixture_id: number;
+            /** Date */
+            date: string | null;
+            /** Gameweek */
+            gameweek: number | null;
+            /** Season */
+            season: string;
+            /** Home Team */
+            home_team: string;
+            /** Away Team */
+            away_team: string;
+            result: components["schemas"]["ResultRead"] | null;
+            forecast: components["schemas"]["FixtureForecastRead"] | null;
+        };
+        /** FixtureReadPagination */
+        FixtureReadPagination: {
             /** Total */
             total: number;
             /** Page */
@@ -52,25 +85,19 @@ export interface components {
             /** Total Pages */
             total_pages: number;
             /** Items */
-            items: components["schemas"]["FixtureForecastRead"][];
-        };
-        /** FixtureRead */
-        FixtureRead: {
-            /** Date */
-            date: string | null;
-            /** Gameweek */
-            gameweek: number | null;
-            /** Home Team */
-            home_team: string;
-            /** Away Team */
-            away_team: string;
-            /** Season */
-            season: string;
+            items: components["schemas"]["FixtureRead"][];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ResultRead */
+        ResultRead: {
+            /** Home Score */
+            home_score: number;
+            /** Away Score */
+            away_score: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -90,7 +117,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    fixtures_get_fixture_forecasts_query: {
+    fixtures_get_fixtures_query: {
         parameters: {
             query?: {
                 sort_by?: string | null;
@@ -114,7 +141,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FixtureForecastReadPagination"];
+                    "application/json": components["schemas"]["FixtureReadPagination"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fixtures_get_fixture: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fixture_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FixtureRead"];
                 };
             };
             /** @description Validation Error */

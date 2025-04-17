@@ -3,25 +3,22 @@ import { operations, unwrap } from '@/utils/api/client'
 import { useQuery } from '@tanstack/react-query'
 import { defaultRetry } from '@/hooks/queries/retry'
 
-export const useFixtureForecasts = (
-  parameters?: Omit<
-    NonNullable<operations['fixtures_get_fixture_forecasts_query']['parameters']['query']>,
-    'pageParam'
-  >,
-  options?: { initialData?: any }
+export const useFixtures = (
+  parameters?: operations['fixtures_get_fixtures_query']['parameters']['query'],
+  options?: { suspense?: boolean }
 ) =>
   useQuery({
     queryKey: ['fixtures', parameters],
     queryFn: async () =>
       unwrap(
-        api.GET('/api/v1/fixtures/forecasts', {
+        api.GET('/api/v1/fixtures/', {
           params: {
             query: {
-              ...parameters,
+              ...(parameters || {}),
             },
           },
         }),
       ),
     retry: defaultRetry,
-    initialData: options?.initialData,
+    ...(options?.suspense ? { suspense: true } : {}),
   })

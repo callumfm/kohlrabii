@@ -10,7 +10,6 @@ interface GameweekSelectorProps {
   onChange: (gameweek: number) => void
   minGameweek?: number
   maxGameweek?: number
-  className?: string
 }
 
 export function GameweekSelector({
@@ -18,7 +17,6 @@ export function GameweekSelector({
   onChange,
   minGameweek = 1,
   maxGameweek = 38,
-  className = "",
 }: GameweekSelectorProps) {
 
   const handlePrevious = () => {
@@ -34,7 +32,7 @@ export function GameweekSelector({
   }
 
   return (
-    <div className={`flex items-center justify-center gap-3 ${className}`}>
+    <div className="flex items-center justify-center gap-3">
       <Button
         variant="ghost"
         size="icon"
