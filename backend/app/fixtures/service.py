@@ -24,10 +24,8 @@ def get_fixture(
         query = query.filter_by(home_team=team)
     elif was_home is False:
         query = query.filter_by(away_team=team)
-    elif was_home is None:
-        query = query.filter(or_(Fixture.away_team == team, Fixture.home_team == team))
     else:
-        raise ValueError("was_home must be True, False or None")
+        query = query.filter(or_(Fixture.away_team == team, Fixture.home_team == team))
 
     if other_team:
         if isinstance(other_team, str):

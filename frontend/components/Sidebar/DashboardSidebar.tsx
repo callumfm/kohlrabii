@@ -1,0 +1,76 @@
+"use client"
+
+import * as React from "react"
+import {
+  ArrowUpCircleIcon,
+  VolleyballIcon,
+  UserIcon,
+} from "lucide-react"
+
+import { NavMain } from "@/components/Sidebar/NavMain"
+import { NavUser, TUser } from "@/components/Sidebar/NavUser"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+import { useUser } from "@/hooks/User/useUser"
+
+const data = {
+  navMain: [
+    {
+      title: "Fixtures",
+      url: "/dashboard/fixtures",
+      icon: VolleyballIcon,
+    },
+    {
+      title: "Players",
+      url: "/dashboard/players",
+      icon: UserIcon,
+    },
+  ],
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user, loading } = useUser()
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  const userData: TUser = {
+    name: "Callum",
+    email: user?.email || "",
+    avatar: "/avatars/shadcn.jpg",
+  }
+
+  return (
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <a href="#">
+                <ArrowUpCircleIcon className="h-5 w-5" />
+                <span className="text-base font-semibold">Kohlrabii</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={userData} />
+      </SidebarFooter>
+    </Sidebar>
+  )
+}

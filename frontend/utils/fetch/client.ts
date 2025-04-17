@@ -1,3 +1,3 @@
-import fetcher from "./fetch";
+import fetcher from "./fetch"
 
-export default fetcher({});
+export default fetcher({})

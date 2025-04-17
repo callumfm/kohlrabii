@@ -1,9 +1,5 @@
-import Hero from "@/components/hero";
+import { redirect } from "next/navigation"
 
-export default async function Home() {
-  return (
-    <>
-      <Hero />
-    </>
-  );
+export default function RootPage() {
+  redirect("/(main)")
 }
