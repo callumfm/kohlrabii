@@ -2,33 +2,36 @@
 
 import { type FC, useState, Suspense } from "react"
 import { useFixtures } from "@/hooks/queries/fixtures"
-import { schemas } from "@/utils/api/client"
-import GameweekResults from "@/components/Results/GameweekResults"
-import GameweekSelector from "@/components/Results/GameweekSelector"
-import GameweekResultsSkeleton from "@/components/Results/GameweekResultsSkeleton"
+import { ClientResponseError, components, schemas } from "@/utils/api/client"
+import GameweekResults from "@/components/Fixtures/GameweekResults"
+import GameweekSelector from "@/components/Fixtures/GameweekSelector"
+import GameweekResultsSkeleton from "@/components/Fixtures/GameweekResultsSkeleton"
+import { SeasonSelector } from "@/components/Fixtures/SeasonSelector"
 import { useDebouncedCallback } from "use-debounce"
-import { useSearchParams, usePathname, useRouter } from "next/navigation"
+import { useSearchParams, usePathname, useRouter, notFound } from "next/navigation"
+import { Season, Team } from "@/client/types"
+import { TeamSelector } from "@/components/Fixtures/TeamSelector"
 
 type TFixturesProps = {
   gameweek: number
-  season: string
+  season: Season
+  team: Team | null
 }
 
-const ResultsContent = ({ gameweek, season }: TFixturesProps) => {
-  const { data } = useFixtures(
-    { gameweek, season },
+const ResultsContent = ({ gameweek, season, team }: TFixturesProps) => {
+  const { data, error } = useFixtures(
+    { gameweek, season, team: team?.name },
     { suspense: true }
   )
 
-  const fixturesData = (data as schemas["FixtureReadPagination"])?.items ?? []
-
-  if (fixturesData.length === 0) {
-    return (
-      <div className="text-center py-10 text-muted-foreground">
-        No fixtures found for Gameweek {gameweek} {season ? `in season ${season}` : ""}
-      </div>
-    )
+  if (
+    error instanceof ClientResponseError &&
+    (error.response.status === 404 || error.response.status === 422)
+  ) {
+    notFound()
   }
+
+  const fixturesData = (data as schemas["FixtureReadPagination"])?.items ?? []
 
   return <GameweekResults fixtures={fixturesData} />
 }
@@ -43,27 +46,49 @@ const FixturesContent: FC<TFixturesProps> = ({ gameweek, season }) => {
 
   const [selectedGameweek, setSelectedGameweek] = useState<number>(initialGameweek)
   const [currentGameweek, setCurrentGameweek] = useState<number>(initialGameweek)
-  const [currentSeason, setCurrentSeason] = useState<string>(initialSeason)
+  const [currentSeason, setCurrentSeason] = useState<Season>(initialSeason as Season)
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null)
 
-  const updateURL = useDebouncedCallback((gw: number, season: string) => {
+  const updateURL = useDebouncedCallback((gw: number, season: Season, team: Team | null = null) => {
     setCurrentGameweek(gw)
     const params = new URLSearchParams(searchParams)
     params.set("gameweek", gw.toString())
     params.set("season", season)
+    if (team) { params.set("team", team.tricode) }
+
     replace(`${pathname}?${params.toString()}`)
   }, 300)
 
-  const handleGameweekChange = (value: number) => {
-    setSelectedGameweek(value)
-    updateURL(value, currentSeason)
+  const handleGameweekChange = (gw: number) => {
+    setSelectedGameweek(gw)
+    updateURL(gw, currentSeason)
+  }
+
+  const handleSeasonChange = (season: Season) => {
+    setCurrentSeason(season)
+    updateURL(currentGameweek, season)
+  }
+
+  const handleTeamChange = (team: Team | null) => {
+      setCurrentTeam(team)
+      updateURL(currentGameweek, currentSeason, team)
   }
 
   return (
-    <div className="container py-6">
-      <div className="mb-6">
+    <div className="container py-6 w-full max-w-3xl mx-auto">
+      <div className="mb-6 flex items-center justify-between">
+        <SeasonSelector
+          currentSeason={currentSeason}
+          onChange={handleSeasonChange}
+        />
         <GameweekSelector
           currentGameweek={selectedGameweek}
           onChange={handleGameweekChange}
+        />
+        <TeamSelector
+          currentTeam={currentTeam}
+          onChange={handleTeamChange}
+          season={currentSeason}
         />
       </div>
 
@@ -71,6 +96,7 @@ const FixturesContent: FC<TFixturesProps> = ({ gameweek, season }) => {
         <ResultsContent
           gameweek={currentGameweek}
           season={currentSeason}
+          team={currentTeam}
         />
       </Suspense>
     </div>

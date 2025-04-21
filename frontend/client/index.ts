@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/teams/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Teams For Season */
+        get: operations["teams_get_teams_for_season"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -99,6 +116,13 @@ export interface components {
             /** Away Score */
             away_score: number;
         };
+        /** TeamRead */
+        TeamRead: {
+            /** Tricode */
+            tricode: string;
+            /** Name */
+            name: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -124,7 +148,7 @@ export interface operations {
                 sort_desc?: boolean;
                 page?: number;
                 page_size?: number;
-                season?: string | null;
+                season?: ("1516" | "1617" | "1718" | "1819" | "1920" | "2021" | "2122" | "2223" | "2324") | null;
                 gameweek?: number | null;
                 date?: string | null;
                 team?: string | null;
@@ -186,4 +210,41 @@ export interface operations {
             };
         };
     };
+    teams_get_teams_for_season: {
+        parameters: {
+            query: {
+                season: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
 }
+type ReadonlyArray<T> = [
+    Exclude<T, undefined>
+] extends [
+    any[]
+] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
+// export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures/"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];

@@ -5,7 +5,8 @@ from typing import Final
 from uuid import uuid1
 
 from fastapi import APIRouter, FastAPI
-from fastapi.exceptions import HTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import scoped_session, sessionmaker
 from starlette.middleware.cors import CORSMiddleware
@@ -17,6 +18,7 @@ from app.database.core import engine
 from app.enums import Environment
 from app.fixtures.api import router as fixtures_router
 from app.logger import logger
+from app.teams.api import router as teams_router
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -40,10 +42,22 @@ async def http_exception_handler(
     request: Request,  # noqa: ARG001
     exc: HTTPException,
 ) -> JSONResponse:
-    logger.error(f"Request ID: {get_request_id()} raised an exception: {exc}")
+    logger.error(f"Request ID: {get_request_id()} raised an http exception: {exc}")
     return JSONResponse(
         status_code=exc.status_code,
         content={"message": exc.detail},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request,  # noqa: ARG001
+    exc: RequestValidationError,
+) -> JSONResponse:
+    logger.error(f"Request ID: {get_request_id()} raised a validation exception: {exc}")
+    return JSONResponse(
+        status_code=422,
+        content={"error": type(exc).__name__, "detail": jsonable_encoder(exc.errors())},
     )
 
 
@@ -93,5 +107,6 @@ if config.ALL_CORS_ORIGINS:
 
 api_router = APIRouter()
 api_router.include_router(fixtures_router)
+api_router.include_router(teams_router)
 
 app.include_router(api_router, prefix=config.API_V1_STR)

@@ -1,12 +1,11 @@
 import { Client, schemas, unwrap } from './api/client'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
-
-import { type TParams } from "@/utils/fetch"
+import { operations } from '@/client'
 
 const _getFixtures = async (
   api: Client,
-  params?: TParams,
+  params?: operations["fixtures_get_fixtures_query"]["parameters"]["query"],
 ): Promise<schemas['FixtureReadPagination']> => {
   return unwrap(
     api.GET('/api/v1/fixtures/', {

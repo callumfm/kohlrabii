@@ -32,7 +32,7 @@ export function GameweekSelector({
   }
 
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div>
       <Button
         variant="ghost"
         size="icon"

@@ -7,7 +7,7 @@ from app.database.core import Base
 from app.fixtures.forecasts.models import FixtureForecastRead
 from app.models import BaseQuery, KolModel, Pagination
 from app.results.models import ResultRead
-from app.validations import Gameweek
+from app.validations import NullGameweek, Season
 
 if TYPE_CHECKING:
     from app.fixtures.forecasts.models import FixtureForecast
@@ -42,23 +42,23 @@ class Fixture(Base):
 
 
 class FixtureQuery(BaseQuery):
-    season: str | None = None
-    gameweek: int | None = Gameweek
+    season: Season | None = None
+    gameweek: int | None = NullGameweek
     date: str | None = None
     team: str | None = None
 
 
 class FixtureCreate(KolModel):
     date: str | None = None
-    gameweek: int | None = Gameweek
+    season: Season
+    gameweek: int | None = NullGameweek
     home_team: str
     away_team: str
-    season: str
 
 
 class FixtureUpdate(KolModel):
     date: str | None = None
-    gameweek: int | None = Gameweek
+    gameweek: int | None = NullGameweek
 
 
 class FixtureRead(KolModel):

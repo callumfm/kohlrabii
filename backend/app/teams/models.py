@@ -2,6 +2,7 @@ from sqlalchemy import Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.core import Base
+from app.models import KolModel
 
 
 class Team(Base):
@@ -16,3 +17,8 @@ class Team(Base):
 
     def __str__(self) -> str:
         return f"{self.name} ({self.tricode})"
+
+
+class TeamRead(KolModel):
+    tricode: str
+    name: str

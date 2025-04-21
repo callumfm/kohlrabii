@@ -9,16 +9,15 @@ import {
 
 interface GameweekResultsProps {
   fixtures: schemas['FixtureRead'][]
-  className?: string
 }
 
-export function GameweekResults({ fixtures, className }: GameweekResultsProps) {
+export function GameweekResults({ fixtures }: GameweekResultsProps) {
   if (fixtures.length === 0) {
     return null
   }
 
   return (
-    <div className={`w-full max-w-3xl mx-auto ${className}`}>
+    <div>
       <Card className="overflow-hidden">
         <CardContent className="p-0">
           <div className="divide-y">

@@ -1,7 +1,6 @@
 import { api } from '@/utils/client'
 import { operations, unwrap } from '@/utils/api/client'
 import { useQuery } from '@tanstack/react-query'
-import { defaultRetry } from '@/hooks/queries/retry'
 
 export const useFixtures = (
   parameters?: operations['fixtures_get_fixtures_query']['parameters']['query'],
@@ -19,6 +18,5 @@ export const useFixtures = (
           },
         }),
       ),
-    retry: defaultRetry,
     ...(options?.suspense ? { suspense: true } : {}),
   })
