@@ -110,3 +110,4 @@ api_router.include_router(fixtures_router)
 api_router.include_router(teams_router)
 
 app.include_router(api_router, prefix=config.API_V1_STR)
+# TODO: Update CORS

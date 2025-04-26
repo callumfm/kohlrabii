@@ -10,14 +10,18 @@ export const updateSession = async (req: NextRequest) => {
   const originHeader = req.headers.get("origin")
   if (originHeader) {
     const origin = new URL(originHeader)
-    if (origin.host.startsWith("dashboard")) {
+    if (origin.host.startsWith("dashboard.")) {
       host = origin.host
     }
   }
 
   // special case for Vercel preview deployment URLs
   if (host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
-    host = host.split("-")[0]
+    if (host.startsWith("dashboard.")) {
+      host = CONFIG.DASHBOARD_DOMAIN
+    } else {
+      host = CONFIG.WEB_DOMAIN
+    }
   }
 
   const searchParams = req.nextUrl.searchParams.toString();
@@ -58,6 +62,9 @@ export const updateSession = async (req: NextRequest) => {
       },
     },
   )
+
+  // console.log(host, "HOST")
+  // console.log(new URL("https://kohlrabii-dij57flr9-kohlrabii.vercel.app/").host.split("-")[0], "URL HOST")
 
   // This will refresh session if expired - required for Server Components
   // https://supabase.com/docs/guides/auth/server-side/nextjs
