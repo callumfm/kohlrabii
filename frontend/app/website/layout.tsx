@@ -1,4 +1,5 @@
 import HeaderAuth from "@/components/Auth/AuthButton"
+import { ThemeProvider } from "next-themes"
 import Link from "next/link"
 
 export default function MainLayout({
@@ -18,7 +19,13 @@ export default function MainLayout({
           </div>
         </nav>
         <div className="flex flex-col gap-20 max-w-5xl p-5">
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </div>
       </div>
     </main>

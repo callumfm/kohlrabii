@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import { CONFIG } from "@/utils/config"
 
 export const createClient = async () => {
   const cookieStore = await cookies()
@@ -8,6 +9,12 @@ export const createClient = async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // cookieOptions: {
+      //   domain: `.${CONFIG.WEB_DOMAIN}`,
+      //   sameSite: 'lax' as const,
+      //   secure: CONFIG.WEB_DOMAIN.startsWith("https") ? true : false,
+      //   httpOnly: true,
+      // },
       cookies: {
         getAll() {
           return cookieStore.getAll()

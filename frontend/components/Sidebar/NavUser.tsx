@@ -40,7 +40,6 @@ export function NavUser({
   user: TUser
 }) {
   const { isMobile } = useSidebar()
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -88,7 +87,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <button onClick={() => signOutAction()} className="w-full flex items-center cursor-pointer">
+              <button onClick={signOutAction} className="w-full flex items-center cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </button>

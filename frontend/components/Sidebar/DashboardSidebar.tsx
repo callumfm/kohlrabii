@@ -24,12 +24,12 @@ const data = {
   navMain: [
     {
       title: "Fixtures",
-      url: "/dashboard/fixtures",
+      url: "/fixtures",
       icon: VolleyballIcon,
     },
     {
       title: "Players",
-      url: "/dashboard/players",
+      url: "/players",
       icon: UserIcon,
     },
   ],

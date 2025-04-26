@@ -7,7 +7,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    router.push('/dashboard/fixtures')
+    router.push('/fixtures')
   }, [router])
 
   return (
@@ -16,3 +16,9 @@ export default function DashboardPage() {
     </div>
   )
 }
+
+// import { redirect } from 'next/navigation'
+
+// export default function DashboardPage() {
+//   redirect('/fixtures')
+// }
