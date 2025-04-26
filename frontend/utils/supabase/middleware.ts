@@ -16,14 +16,9 @@ export const updateSession = async (req: NextRequest) => {
   }
 
   // special case for Vercel preview deployment URLs
-  // if (
-  //   hostname.includes("---") &&
-  //   hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-  // ) {
-  //   hostname = `${hostname.split("---")[0]}.${
-  //     process.env.NEXT_PUBLIC_ROOT_DOMAIN
-  //   }`;
-  // }
+  if (host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
+    host = host.split("-")[0]
+  }
 
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${req.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
