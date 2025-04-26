@@ -1,15 +1,4 @@
-const getBaseURL = () => {
-    if (typeof window !== 'undefined') {
-      return window.location.origin
-    }
-    const vercelURL = process.env.NEXT_PUBLIC_VERCEL_URL
-    if (vercelURL) {
-      return `https://${vercelURL}`
-    }
-    return process.env.NEXT_PUBLIC_WEBSITE_URL!
-}
-
-const webURL: URL = new URL(getBaseURL())
+const webURL: URL = new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
 const webDomain: string = webURL.host
 const dashboardDomain: string = `dashboard.${webDomain}`
 const dashboardURL: string = `${webURL.protocol}//${dashboardDomain}`
