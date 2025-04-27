@@ -16,16 +16,18 @@ export const updateSession = async (req: NextRequest) => {
   }
 
   // special case for Vercel preview deployment URLs
-  if (host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
-    if (host.startsWith("dashboard.")) {
-      host = CONFIG.DASHBOARD_DOMAIN
-    } else {
-      host = CONFIG.WEB_DOMAIN
-    }
-  }
+  // if (host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
+  //   if (host.startsWith("dashboard.")) {
+  //     host = CONFIG.DASHBOARD_DOMAIN
+  //   } else {
+  //     host = CONFIG.WEB_DOMAIN
+  //   }
+  // }
 
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${req.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+  const cookieDomain = process.env.VERCEL_ENV === "preview" ? undefined : `.${CONFIG.WEB_DOMAIN}`
+  const cookieSecure = CONFIG.WEB_DOMAIN.startsWith("https") ? true : false
 
   // Auth
   let response = NextResponse.next({
@@ -39,9 +41,9 @@ export const updateSession = async (req: NextRequest) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookieOptions: {
-        domain: `.${CONFIG.WEB_DOMAIN}`,
+        domain: cookieDomain,
         sameSite: 'lax' as const,
-        secure: CONFIG.WEB_DOMAIN.startsWith("https") ? true : false,
+        secure: cookieSecure,
         httpOnly: true,
       },
       cookies: {
@@ -62,9 +64,6 @@ export const updateSession = async (req: NextRequest) => {
       },
     },
   )
-
-  // console.log(host, "HOST")
-  // console.log(new URL("https://kohlrabii-dij57flr9-kohlrabii.vercel.app/").host.split("-")[0], "URL HOST")
 
   // This will refresh session if expired - required for Server Components
   // https://supabase.com/docs/guides/auth/server-side/nextjs
