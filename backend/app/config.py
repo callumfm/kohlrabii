@@ -26,6 +26,7 @@ class AppConfig(BaseSettings):
     ENVIRONMENT: Environment = Environment.LOCAL
 
     # RESEND_API_KEY: str
+    SENTRY_DSN: str
     SUPABASE_URL: str
     SUPABASE_SERVICE_KEY: str
     FRONTEND_URL: str

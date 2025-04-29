@@ -6,8 +6,9 @@ app.egg-info
 htmlcov
 .cache
 .venv
-.env*.local
+.env.*
 .env
+!.env.example
 .DS_Store
 **/.DS_Store
 data/

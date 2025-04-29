@@ -13,5 +13,6 @@ export const CONFIG = {
     WEB_DOMAIN: webDomain,
     WEB_URL: webURL.toString(),
     DASHBOARD_DOMAIN: dashboardDomain,
-    DASHBOARD_URL: dashboardURL
+    DASHBOARD_URL: dashboardURL,
+    SENTRY_DSN: process.env.SENTRY_DSN,
 }

@@ -27,6 +27,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL?Variable not set}
       - SUPABASE_URL=${SUPABASE_URL?Variable not set}
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY?Variable not set}
+      - SENTRY_DSN=${SENTRY_DSN?Variable not set}
       - DB_HOST=${DB_HOST?Variable not set}
       - DB_PORT=${DB_PORT?Variable not set}
       - DB_USER=${DB_USER?Variable not set}

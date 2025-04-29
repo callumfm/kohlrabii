@@ -18,7 +18,10 @@ from app.database.core import engine
 from app.enums import Environment
 from app.fixtures.api import router as fixtures_router
 from app.logger import logger
+from app.sentry import configure_sentry
 from app.teams.api import router as teams_router
+
+configure_sentry()
 
 app = FastAPI(
     title=config.PROJECT_NAME,
