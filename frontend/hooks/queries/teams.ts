@@ -9,7 +9,7 @@ export const useTeams = (
     queryKey: ['teams', parameters],
     queryFn: async () =>
       unwrap(
-        api.GET('/api/v1/teams/', {
+        api.GET('/api/v1/teams', {
           params: {
             query: {
               season: parameters.season,

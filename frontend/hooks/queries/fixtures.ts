@@ -10,7 +10,7 @@ export const useFixtures = (
     queryKey: ['fixtures', parameters],
     queryFn: async () =>
       unwrap(
-        api.GET('/api/v1/fixtures/', {
+        api.GET('/api/v1/fixtures', {
           params: {
             query: {
               ...(parameters || {}),

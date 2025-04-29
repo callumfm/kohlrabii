@@ -4,6 +4,7 @@ import {
   Client,
   Middleware,
 } from '@/utils/api/client'
+import { CONFIG } from '../config'
 
 const errorMiddleware: Middleware = {
   onError: async () => {
@@ -15,7 +16,7 @@ const errorMiddleware: Middleware = {
 }
 
 export const createClientSideAPI = (token?: string): Client => {
-  const api = baseCreateClient(process.env.NEXT_PUBLIC_API_URL as string, token)
+  const api = baseCreateClient(CONFIG.DASHBOARD_URL, token)
   api.use(errorMiddleware)
   return api
 }
@@ -42,9 +43,8 @@ export const createServerSideAPI = (
     Cookie: cookies.toString(),
   }
 
-
   const client = baseCreateClient(
-    process.env.NEXT_PUBLIC_API_URL as string,
+    process.env.SERVER_API_URL as string,
     token,
     apiHeaders,
   )

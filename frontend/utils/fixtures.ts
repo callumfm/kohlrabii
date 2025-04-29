@@ -8,7 +8,7 @@ const _getFixtures = async (
   params?: operations["fixtures_get_fixtures_query"]["parameters"]["query"],
 ): Promise<schemas['FixtureReadPagination']> => {
   return unwrap(
-    api.GET('/api/v1/fixtures/', {
+    api.GET('/api/v1/fixtures', {
       params: {
         query: {
             ...params,

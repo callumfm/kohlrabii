@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/v1/fixtures/": {
+    "/api/v1/fixtures": {
         parameters: {
             query?: never;
             header?: never;
@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/teams/": {
+    "/api/v1/teams": {
         parameters: {
             query?: never;
             header?: never;
@@ -247,4 +247,4 @@ type ReadonlyArray<T> = [
 ] extends [
     any[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-// export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures/"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];
+// export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];

@@ -15,7 +15,7 @@ from app.fixtures.models import (
 router = APIRouter(prefix="/fixtures", tags=["fixtures"])
 
 
-@router.get("/", response_model=FixtureReadPagination)
+@router.get("", response_model=FixtureReadPagination)
 def get_fixtures_query(
     *, session: SessionDep, query_in: FixtureQuery = Depends()
 ) -> Any:

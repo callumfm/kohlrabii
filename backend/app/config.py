@@ -1,21 +1,13 @@
 import urllib.parse
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Any, no_type_check
+from typing import Any, no_type_check
 
-from pydantic import AnyUrl, BeforeValidator, computed_field
+from pydantic import computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.enums import Environment
-
-
-def parse_cors(v: Any) -> list[str] | str:
-    if isinstance(v, str) and not v.startswith("["):
-        return [i.strip() for i in v.split(",")]
-    elif isinstance(v, list | str):
-        return v
-    raise ValueError(v)
 
 
 def get_model_config() -> SettingsConfigDict:
@@ -36,22 +28,9 @@ class AppConfig(BaseSettings):
     # RESEND_API_KEY: str
     SUPABASE_URL: str
     SUPABASE_SERVICE_KEY: str
-
     FRONTEND_URL: str
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
-
     JWT_ALGORITHM: str = "HS256"
-
     DATA_DIR: Path = Path(__file__).parent.parent / "data"
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def ALL_CORS_ORIGINS(self) -> list[str]:
-        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_URL
-        ]
 
 
 class FootballConfig(BaseSettings):

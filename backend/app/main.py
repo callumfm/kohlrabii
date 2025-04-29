@@ -94,20 +94,17 @@ async def add_process_time_header(
     return response
 
 
-if config.ALL_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=config.ALL_CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-        expose_headers=["X-Process-Time"],
-    )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[config.FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Process-Time"],
+)
 
 api_router = APIRouter()
 api_router.include_router(fixtures_router)
 api_router.include_router(teams_router)
 
 app.include_router(api_router, prefix=config.API_V1_STR)
-# TODO: Update CORS

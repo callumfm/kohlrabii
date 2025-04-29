@@ -3,33 +3,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { CONFIG } from "@/utils/config"
 
 export const updateSession = async (req: NextRequest) => {
-  // Get hostname of request
-  let host = req.headers.get("host")!
-
-  // Hacky replacement for redirect bug
-  const originHeader = req.headers.get("origin")
-  if (originHeader) {
-    const origin = new URL(originHeader)
-    if (origin.host.startsWith("dashboard.")) {
-      host = origin.host
-    }
-  }
-
-  // special case for Vercel preview deployment URLs
-  // if (host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)) {
-  //   if (host.startsWith("dashboard.")) {
-  //     host = CONFIG.DASHBOARD_DOMAIN
-  //   } else {
-  //     host = CONFIG.WEB_DOMAIN
-  //   }
-  // }
-
-  const searchParams = req.nextUrl.searchParams.toString();
-  const path = `${req.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+  // Cookies
   const cookieDomain = process.env.VERCEL_ENV === "preview" ? undefined : `.${CONFIG.WEB_DOMAIN}`
   const cookieSecure = CONFIG.WEB_DOMAIN.startsWith("https") ? true : false
 
-  // Auth
   let response = NextResponse.next({
     request: {
       headers: req.headers,
@@ -69,6 +46,21 @@ export const updateSession = async (req: NextRequest) => {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const user = await supabase.auth.getUser()
 
+  // Rerouting
+  const searchParams = req.nextUrl.searchParams.toString()
+  const path = `${req.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`
+
+  // Hacky host solution for redirect bug
+  let host = req.headers.get("host")!
+
+  const originHeader = req.headers.get("origin")
+  if (originHeader) {
+    const origin = new URL(originHeader)
+    if (origin.host.startsWith("dashboard.")) {
+      host = origin.host
+    }
+  }
+
   // rewrites for dashboard pages
   if (host == CONFIG.DASHBOARD_DOMAIN) {
 
@@ -82,12 +74,13 @@ export const updateSession = async (req: NextRequest) => {
       return NextResponse.redirect(new URL("/", req.url))
     }
 
+    // rewrite to `/dashboard` route
     return NextResponse.rewrite(
       new URL(`/dashboard${path === "/" ? "" : path}`, req.url),
     )
   }
 
-  // rewrite root application to `/website` folder
+  // rewrite root application to `/website` route
   if (host === CONFIG.WEB_DOMAIN) {
     return NextResponse.rewrite(
       new URL(`/website${path === "/" ? "" : path}`, req.url),

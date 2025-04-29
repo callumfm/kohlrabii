@@ -25,7 +25,6 @@ services:
     environment:
       - ENVIRONMENT=local
       - FRONTEND_URL=${FRONTEND_URL?Variable not set}
-      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS?Variable not set}
       - SUPABASE_URL=${SUPABASE_URL?Variable not set}
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY?Variable not set}
       - DB_HOST=${DB_HOST?Variable not set}
