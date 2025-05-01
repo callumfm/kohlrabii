@@ -268,13 +268,13 @@ def time_decay(dates: DateArray, xi: float) -> FloatArray:
 @njit  # type: ignore[misc]
 def stirling_gammaln(n: int) -> float:
     """Stirling's approximation for gammaln."""
-    return float(n * np.log(n) - n + 0.5 * np.log(2 * np.pi * n))
+    return n * np.log(n) - n + 0.5 * np.log(2 * np.pi * n)  # type: ignore[no-any-return]
 
 
 @vectorize(["float64(int64, float64)"])  # type: ignore[misc]
 def poisson_logpmf(k: int, mu: float) -> float:
     """Fast Poisson log-PMF using Stirling's approximation for gammaln."""
-    return float(k * np.log(mu) - stirling_gammaln(k + 1) - mu)
+    return k * np.log(mu) - stirling_gammaln(k + 1) - mu  # type: ignore[no-any-return]
 
 
 @njit  # type: ignore[misc]

@@ -73,6 +73,14 @@ export interface components {
             home_goals_for: number;
             /** Away Goals For */
             away_goals_for: number;
+            /** Home Attack */
+            home_attack: number;
+            /** Away Attack */
+            away_attack: number;
+            /** Home Defence */
+            home_defence: number;
+            /** Away Defence */
+            away_defence: number;
         };
         /** FixtureRead */
         FixtureRead: {
@@ -84,10 +92,8 @@ export interface components {
             gameweek: number | null;
             /** Season */
             season: string;
-            /** Home Team */
-            home_team: string;
-            /** Away Team */
-            away_team: string;
+            home_team: components["schemas"]["TeamRead"];
+            away_team: components["schemas"]["TeamRead"];
             result: components["schemas"]["ResultRead"] | null;
             forecast: components["schemas"]["FixtureForecastRead"] | null;
         };
@@ -122,6 +128,10 @@ export interface components {
             tricode: string;
             /** Name */
             name: string;
+            /** Short Name */
+            short_name: string;
+            /** Badge Uri */
+            badge_uri: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -247,4 +257,4 @@ type ReadonlyArray<T> = [
 ] extends [
     any[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-// export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];
+export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<NonNullable<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]>["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];

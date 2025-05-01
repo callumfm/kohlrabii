@@ -16,7 +16,9 @@ class Result(Base):
     result_id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True
     )
-    fixture_id: Mapped[int] = mapped_column(Integer, ForeignKey("fixture.fixture_id"))
+    fixture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("fixture.fixture_id"), index=True
+    )
     home_score: Mapped[int] = mapped_column(Integer, nullable=False)
     away_score: Mapped[int] = mapped_column(Integer, nullable=False)
 

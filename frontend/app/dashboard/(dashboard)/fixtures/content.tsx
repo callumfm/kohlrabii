@@ -2,7 +2,7 @@
 
 import { type FC, useState, Suspense } from "react"
 import { useFixtures } from "@/hooks/queries/fixtures"
-import { ClientResponseError, components, schemas } from "@/utils/api/client"
+import { ClientResponseError, schemas } from "@/utils/api/client"
 import GameweekResults from "@/components/Fixtures/GameweekResults"
 import GameweekSelector from "@/components/Fixtures/GameweekSelector"
 import GameweekResultsSkeleton from "@/components/Fixtures/GameweekResultsSkeleton"
@@ -15,7 +15,7 @@ import { TeamSelector } from "@/components/Fixtures/TeamSelector"
 type TFixturesProps = {
   gameweek: number
   season: Season
-  team: Team | null
+  team?: Team | null
 }
 
 const ResultsContent = ({ gameweek, season, team }: TFixturesProps) => {

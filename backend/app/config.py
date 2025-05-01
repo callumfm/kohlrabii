@@ -11,8 +11,9 @@ from app.enums import Environment
 
 
 def get_model_config() -> SettingsConfigDict:
+    env_file = Path(__file__).resolve().parent.parent / ".env.local"
     return SettingsConfigDict(
-        env_file=".env.local",
+        env_file=str(env_file),
         env_ignore_empty=True,
         extra="ignore",
     )
@@ -48,6 +49,26 @@ class FootballConfig(BaseSettings):
         "2223",
         "2324",
     ]
+
+    SHORT_TEAM_NAMES: dict[str, str] = {
+        "Brighton and Hove Albion": "Brighton",
+        "Cardiff City": "Cardiff",
+        "Huddersfield Town": "Huddersfield",
+        "Leicester City": "Leicester",
+        "Leeds United": "Leeds",
+        "Luton Town": "Luton",
+        "Manchester City": "Man City",
+        "Manchester United": "Man Utd",
+        "Newcastle United": "Newcastle",
+        "Norwich City": "Norwich",
+        "Nottingham Forest": "Nott'm Forest",
+        "Sheffield United": "Sheffield Utd",
+        "Swansea City": "Swansea",
+        "Tottenham Hotspur": "Tottenham",
+        "West Ham United": "West Ham",
+        "West Bromwich Albion": "West Brom",
+        "Wolverhampton Wanderers": "Wolves",
+    }
 
 
 class PostgresConfig(BaseSettings):

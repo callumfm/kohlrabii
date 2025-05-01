@@ -16,7 +16,9 @@ class FixtureForecast(Base):
     forecast_id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True
     )
-    fixture_id: Mapped[int] = mapped_column(Integer, ForeignKey("fixture.fixture_id"))
+    fixture_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("fixture.fixture_id"), index=True
+    )
     home_win: Mapped[float] = mapped_column(Float, nullable=False)
     away_win: Mapped[float] = mapped_column(Float, nullable=False)
     home_clean_sheet: Mapped[float] = mapped_column(Float, nullable=False)
@@ -47,3 +49,7 @@ class FixtureForecastRead(KolModel):
     away_clean_sheet: float
     home_goals_for: float
     away_goals_for: float
+    home_attack: float
+    away_attack: float
+    home_defence: float
+    away_defence: float

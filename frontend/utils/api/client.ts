@@ -62,6 +62,7 @@ export const unwrap = async <
   ParseAsResponse<SuccessResponse<ResponseObjectMap<T>, Media>, Options>
 > => {
   const { data, error, response } = await p
+
   if (handlers) {
     const handler = handlers[response.status]
     if (handler) {

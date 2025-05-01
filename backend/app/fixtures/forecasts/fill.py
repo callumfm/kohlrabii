@@ -6,7 +6,7 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from sqlalchemy import Row
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from app.database.core import get_session
 from app.fixtures.forecasts.dixon_coles import DixonColesModel
@@ -14,8 +14,9 @@ from app.fixtures.forecasts.models import FixtureForecast
 from app.fixtures.models import Fixture
 from app.logger import logger
 from app.results.models import Result
+from app.teams.models import Team
 
-FORECAST_HORIZON = 3
+FORECAST_HORIZON = 10
 
 TrainResults: TypeAlias = dict[
     str, npt.NDArray[np.datetime64] | npt.NDArray[np.float64] | npt.NDArray[np.str_]
@@ -37,15 +38,20 @@ def get_train_results(session: Session, end_season: str, end_gw: int) -> TrainRe
             f"No results found for the given season {end_season} and gameweek {end_gw}"
         )
 
+    HomeTeam = aliased(Team)
+    AwayTeam = aliased(Team)
+
     results = (
         session.query(
             Fixture.date,
-            Fixture.home_team,
-            Fixture.away_team,
+            HomeTeam.name.label("home_team"),
+            AwayTeam.name.label("away_team"),
             Result.home_score,
             Result.away_score,
         )
         .join(Result.fixture)
+        .join(HomeTeam, Fixture.home_team_id == HomeTeam.id)
+        .join(AwayTeam, Fixture.away_team_id == AwayTeam.id)
         .filter(Fixture.date <= latest_date.date)
         .all()
     )
@@ -68,12 +74,16 @@ def get_test_fixtures(
 ) -> list[Row[tuple[int, str, str]]]:
     """Get the fixtures for the test set."""
     logger.info("Loading test set...")
+    HomeTeam = aliased(Team)
+    AwayTeam = aliased(Team)
     fixtures = (
         session.query(
             Fixture.fixture_id,
-            Fixture.home_team,
-            Fixture.away_team,
+            HomeTeam.name.label("home_team"),
+            AwayTeam.name.label("away_team"),
         )
+        .join(HomeTeam, Fixture.home_team_id == HomeTeam.id)
+        .join(AwayTeam, Fixture.away_team_id == AwayTeam.id)
         .filter(Fixture.season == season, Fixture.gameweek == start_gw)
         .order_by(Fixture.date.desc())
         .limit(horizon)
@@ -90,6 +100,7 @@ def fill_fixture_forecasts(
     horizon: int = FORECAST_HORIZON,
 ) -> None:
     """Back-fill team performance forecasts over historical data."""
+    logger.info("Filling 'FixtureForecasts' table...")
     # TODO: Get latest gameweek and season
     if not split_gameweek:
         split_gameweek = 1
@@ -122,5 +133,4 @@ if __name__ == "__main__":
             session=session,
             split_gameweek=19,
             split_season="2324",
-            horizon=3,
         )

@@ -11,6 +11,7 @@ from app.fixtures.models import (
     FixtureRead,
     FixtureReadPagination,
 )
+from app.teams.service import get_team_from_name
 
 router = APIRouter(prefix="/fixtures", tags=["fixtures"])
 
@@ -27,10 +28,11 @@ def get_fixtures_query(
         query = query.filter_by(gameweek=query_in.gameweek)
 
     if query_in.team:
+        team = get_team_from_name(session=session, team_name=query_in.team)
         query = query.filter(
             or_(
-                Fixture.home_team == query_in.team,
-                Fixture.away_team == query_in.team,
+                Fixture.home_team_id == team.id,
+                Fixture.away_team_id == team.id,
             )
         )
 

@@ -10,6 +10,7 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "numba>=0.61.0",
     "pandas>=2.2.3",
+    "playwright>=1.52.0",
     "psycopg2-binary>=2.9.10",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.1",

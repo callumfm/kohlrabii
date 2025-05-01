@@ -6,9 +6,10 @@ import {
   Card,
   CardContent
 } from "@/components/ui/card"
+import { FormattedDate } from "@/components/Fixtures/FormattedDate"
 
 interface GameweekResultsProps {
-  fixtures: schemas['FixtureRead'][]
+  fixtures: schemas["FixtureRead"][]
 }
 
 export function GameweekResults({ fixtures }: GameweekResultsProps) {
@@ -16,70 +17,88 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
     return null
   }
 
+  const fixturesByDate: Record<string, GameweekResultsProps["fixtures"]> = {}
+
+  fixtures.forEach(fixture => {
+    const date = fixture.date ? fixture.date.split("T")[0] : "Unknown Date"
+    if (!fixturesByDate[date]) {
+      fixturesByDate[date] = []
+    }
+    fixturesByDate[date].push(fixture)
+  })
+
+  console.log(fixtures[0].forecast)
+
   return (
-    <div>
-      <Card className="overflow-hidden">
-        <CardContent className="p-0">
-          <div className="divide-y">
-            {fixtures.map((fixture, index) => {
+    <div className="space-y-10">
+      {Object.entries(fixturesByDate).map(([date, dateFixtures]) => (
+        <div key={date}>
+          <h3 className="text-sm font-medium text-muted-foreground mb-2 text-center">
+            <FormattedDate date={date} />
+          </h3>
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <div className="divide-y">
+                {dateFixtures.map((fixture, index) => {
 
-              const homeGoals = fixture.result?.home_score !== undefined
-                ? fixture.result.home_score
-                : fixture.forecast?.home_goals_for !== undefined
-                  ? Math.round(fixture.forecast.home_goals_for)
-                  : null;
+                  const homeGoals = fixture.result?.home_score !== undefined
+                    ? fixture.result.home_score
+                    : fixture.forecast?.home_goals_for !== undefined
+                      ? Math.round(fixture.forecast.home_goals_for)
+                      : null;
 
-              const awayGoals = fixture.result?.away_score !== undefined
-                ? fixture.result.away_score
-                : fixture.forecast?.away_goals_for !== undefined
-                  ? Math.round(fixture.forecast.away_goals_for)
-                  : null;
+                  const awayGoals = fixture.result?.away_score !== undefined
+                    ? fixture.result.away_score
+                    : fixture.forecast?.away_goals_for !== undefined
+                      ? Math.round(fixture.forecast.away_goals_for)
+                      : null;
 
-              return (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors"
-                >
-                  {/* Home Team */}
-                  <div className="flex-1 flex justify-end items-center gap-3 min-w-[150px]">
-                    <span className="font-semibold text-base truncate">{fixture.home_team}</span>
-                    <div className="w-8 h-8 relative flex-shrink-0">
-                      {/* Placeholder club crest - replace with actual image when available */}
-                      <div className="w-full h-full flex items-center justify-center rounded-full bg-muted">
-                        <span className="text-[10px]">
-                          {fixture.home_team.substring(0, 3).toUpperCase()}
-                        </span>
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors"
+                    >
+                      {/* Home Team */}
+                      <div className="flex-1 flex justify-end items-center gap-3 min-w-[150px]">
+                        <span className="font-semibold text-base truncate">{fixture.home_team.short_name}</span>
+                        <div className="w-8 h-8 relative flex-shrink-0">
+                          <img
+                            src={fixture.home_team.badge_uri}
+                            alt={`${fixture.home_team.name} badge`}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Score */}
+                      <div className="px-3 mx-2 flex-shrink-0 relative group">
+                        <div className="bg-purple-900 text-white font-bold text-base w-16 flex items-center justify-center py-1 rounded-md cursor-pointer">
+                          {homeGoals !== null && awayGoals !== null
+                            ? `${homeGoals} - ${awayGoals}`
+                            : ' v '}
+                        </div>
+                      </div>
+
+                      {/* Away Team */}
+                      <div className="flex-1 flex items-center gap-3 min-w-[150px]">
+                        <div className="w-8 h-8 relative flex-shrink-0">
+                          <img
+                            src={fixture.away_team.badge_uri}
+                            alt={`${fixture.away_team.name} badge`}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <span className="font-semibold text-base truncate">{fixture.away_team.short_name}</span>
                       </div>
                     </div>
-                  </div>
+                  )
+                })}
+              </div>
 
-                  {/* Score */}
-                  <div className="px-3 mx-2 flex-shrink-0">
-                    <div className="bg-purple-900 text-white font-bold text-base w-16 flex items-center justify-center py-1 rounded-md">
-                      {homeGoals !== null && awayGoals !== null
-                        ? `${homeGoals} - ${awayGoals}`
-                        : ' v '}
-                    </div>
-                  </div>
-
-                  {/* Away Team */}
-                  <div className="flex-1 flex items-center gap-3 min-w-[150px]">
-                    <div className="w-8 h-8 relative flex-shrink-0">
-                      {/* Placeholder club crest - replace with actual image when available */}
-                      <div className="w-full h-full flex items-center justify-center rounded-full bg-muted">
-                        <span className="text-[10px]">
-                          {fixture.away_team.substring(0, 3).toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="font-semibold text-base truncate">{fixture.away_team}</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
     </div>
   )
 }

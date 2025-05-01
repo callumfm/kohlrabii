@@ -1,7 +1,7 @@
 import FixturesContent from "./content"
 import { Season } from "@/client/types"
 
-export default async function ResultsPage(props: {
+export default async function FixturesPage(props: {
   searchParams?: Promise<{
     gameweek?: string
     season?: string
@@ -13,7 +13,6 @@ export default async function ResultsPage(props: {
 
   return (
     <FixturesContent
-      team={null}
       gameweek={gameweek}
       season={season}
     />
