@@ -3,8 +3,8 @@
 import * as React from "react"
 import {
   ArrowUpCircleIcon,
-  VolleyballIcon,
-  UserIcon,
+  Calendar1Icon,
+  UsersRoundIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/Sidebar/NavMain"
@@ -25,12 +25,12 @@ const data = {
     {
       title: "Fixtures",
       url: "/fixtures",
-      icon: VolleyballIcon,
+      icon: Calendar1Icon,
     },
     {
-      title: "Players",
-      url: "/players",
-      icon: UserIcon,
+      title: "Teams",
+      url: "/teams",
+      icon: UsersRoundIcon,
     },
   ],
 }

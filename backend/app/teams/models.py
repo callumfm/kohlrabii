@@ -17,7 +17,6 @@ class Team(Base):
     tricode: Mapped[str] = mapped_column(String(3), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     short_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    badge_uri: Mapped[str] = mapped_column(String(512), nullable=False)
 
     seasons: Mapped[list["SeasonTeam"]] = relationship(
         "SeasonTeam", back_populates="team"
@@ -53,7 +52,9 @@ class SeasonTeam(Base):
 
 
 class TeamRead(KolModel):
+    id: int
     tricode: str
     name: str
     short_name: str
-    badge_uri: str
+    # home_fixtures: list[FixtureRead]
+    # away_fixtures: list[FixtureRead]

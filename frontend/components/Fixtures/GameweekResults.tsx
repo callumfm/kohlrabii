@@ -7,6 +7,8 @@ import {
   CardContent
 } from "@/components/ui/card"
 import { FormattedDate } from "@/components/Fixtures/FormattedDate"
+import Link from "next/link"
+import Image from "next/image"
 
 interface GameweekResultsProps {
   fixtures: schemas["FixtureRead"][]
@@ -60,14 +62,18 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                     >
                       {/* Home Team */}
                       <div className="flex-1 flex justify-end items-center gap-3 min-w-[150px]">
-                        <span className="font-semibold text-base truncate">{fixture.home_team.short_name}</span>
-                        <div className="w-8 h-8 relative flex-shrink-0">
-                          <img
-                            src={fixture.home_team.badge_uri}
-                            alt={`${fixture.home_team.name} badge`}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
+                        <Link href={`/teams/${fixture.home_team.id}`} className="flex justify-end items-center gap-3 hover:underline">
+                          <span className="font-semibold text-base truncate">{fixture.home_team.short_name}</span>
+                          <div className="w-8 h-8 relative flex-shrink-0">
+                            <Image
+                              src={`https://wqzqedgnpowfhveqdwhv.supabase.co/storage/v1/object/public/badges/${fixture.home_team.id}.png`}
+                              alt="Home Badge"
+                              width={32}
+                              height={32}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        </Link>
                       </div>
 
                       {/* Score */}
@@ -81,14 +87,18 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
 
                       {/* Away Team */}
                       <div className="flex-1 flex items-center gap-3 min-w-[150px]">
-                        <div className="w-8 h-8 relative flex-shrink-0">
-                          <img
-                            src={fixture.away_team.badge_uri}
-                            alt={`${fixture.away_team.name} badge`}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <span className="font-semibold text-base truncate">{fixture.away_team.short_name}</span>
+                        <Link href={`/teams/${fixture.away_team.id}`} className="flex items-center gap-3 hover:underline">
+                          <div className="w-8 h-8 relative flex-shrink-0">
+                            <Image
+                              src={`https://wqzqedgnpowfhveqdwhv.supabase.co/storage/v1/object/public/badges/${fixture.away_team.id}.png`}
+                              alt="Away Badge"
+                              width={32}
+                              height={32}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <span className="font-semibold text-base truncate">{fixture.away_team.short_name}</span>
+                        </Link>
                       </div>
                     </div>
                   )

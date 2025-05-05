@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/teams/{team_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Team By Id */
+        get: operations["teams_get_team_by_id"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/teams": {
         parameters: {
             query?: never;
@@ -124,14 +141,16 @@ export interface components {
         };
         /** TeamRead */
         TeamRead: {
+            /** Id */
+            id: number;
             /** Tricode */
             tricode: string;
             /** Name */
             name: string;
             /** Short Name */
             short_name: string;
-            /** Badge Uri */
-            badge_uri: string;
+            /** Badge Url */
+            readonly badge_url: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -220,6 +239,37 @@ export interface operations {
             };
         };
     };
+    teams_get_team_by_id: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                team_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     teams_get_teams_for_season: {
         parameters: {
             query: {
@@ -257,4 +307,4 @@ type ReadonlyArray<T> = [
 ] extends [
     any[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<NonNullable<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]>["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];
+export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];

@@ -24,7 +24,7 @@ class AppConfig(BaseSettings):
 
     PROJECT_NAME: str = "kohlrabii"
     API_V1_STR: str = "/api/v1"
-    ENVIRONMENT: Environment = Environment.LOCAL
+    ENVIRONMENT: Environment = Environment.DEV
 
     # RESEND_API_KEY: str
     SENTRY_DSN: str

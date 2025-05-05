@@ -8,6 +8,7 @@ from app.fixtures.fill import make_fixtures_table
 from app.logger import logger
 from app.results.fill import make_results_table
 from app.seasons import sort_seasons
+from app.teams.badges.fill import make_team_badges_bucket
 from app.teams.fill import make_teams_tables
 from app.teams.models import Team
 
@@ -35,6 +36,7 @@ def seed_database(session: Session) -> None:
     make_teams_tables(seasons=seasons, session=session)
     make_fixtures_table(seasons=seasons, session=session)
     make_results_table(seasons=seasons, session=session)
+    make_team_badges_bucket()
 
 
 def init_db(session: Session, clean: bool = False) -> None:

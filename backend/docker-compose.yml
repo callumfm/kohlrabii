@@ -23,7 +23,7 @@ services:
         - path: ./pyproject.toml
           action: rebuild
     environment:
-      - ENVIRONMENT=local
+      - ENVIRONMENT=dev
       - FRONTEND_URL=${FRONTEND_URL?Variable not set}
       - SUPABASE_URL=${SUPABASE_URL?Variable not set}
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY?Variable not set}

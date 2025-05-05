@@ -2,7 +2,13 @@ import {withSentryConfig} from "@sentry/nextjs";
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-    // trailingSlash: false,
+    images: {
+        remotePatterns: [
+            {
+                hostname: 'wqzqedgnpowfhveqdwhv.supabase.co',
+            },
+        ],
+    },
 };
 
 export default withSentryConfig(nextConfig, {
