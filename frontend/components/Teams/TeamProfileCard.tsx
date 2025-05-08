@@ -1,4 +1,5 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CONFIG } from "@/utils/config"
 import Image from 'next/image'
 
 interface TeamProfileCardProps {
@@ -13,7 +14,7 @@ export function TeamProfileCard({ team_id, name, tricode }: TeamProfileCardProps
             <CardHeader className="relative">
                 <div className="flex items-center gap-4">
                     <Image
-                        src={`https://wqzqedgnpowfhveqdwhv.supabase.co/storage/v1/object/public/badges/${team_id}.png`}
+                        src={`${CONFIG.SUPABASE_BUCKET_URL}/badges/${team_id}.png`}
                         alt="Badge"
                         width={48}
                         height={48}

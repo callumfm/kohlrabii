@@ -16,10 +16,9 @@ This directory contains the client-side code for the Kohlrabii web-app.
 | Deployment              | [Vercel](https://github.com/vercel/vercel)  |
 
 
-
 ## Quick Start
 
 Run the client server:
 ```bash
-npm run dev
+pnpm run dev
 ```

@@ -1,16 +1,17 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import React from "react"
 
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart"
 import { ChartCard } from "./ChartCard"
 import { useFixtures } from "@/hooks/queries/fixtures"
 import { schemas } from "@/utils/api/client"
+import { CONFIG } from "@/utils/config"
 
 const chartConfig = {
   forGoals: {
@@ -19,10 +20,37 @@ const chartConfig = {
   },
   againstGoals: {
     label: "Goals Against",
-    color: "hsl(var(--secondary))",
+    color: "hsl(var(--black))",
   },
 } satisfies ChartConfig
 
+
+const toolTip = ({ active, payload }: { active: boolean | undefined, payload: any }) => {
+  if (!active || !payload?.length) return null
+  const data = payload[0].payload
+  return (
+    <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl">
+      <div className="text-muted-foreground">
+        GW{data.gameweek}
+      </div>
+      <div className="flex items-center justify-between pt-1">
+        <span className={`w-12 text-right ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}>
+          {data.home_team.tricode}
+        </span>
+        <span className={`w-4 text-center ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}>
+          {data.result?.home_score}
+        </span>
+        <span className="text-muted-foreground">v</span>
+        <span className={`w-4 text-center ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}>
+          {data.result?.away_score}
+        </span>
+        <span className={`w-12 text-left ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}>
+          {data.away_team.tricode}
+        </span>
+      </div>
+    </div>
+  )
+}
 
 export function ResultsChart({ team }: { team: schemas["TeamRead"] }) {
   const { data, error } = useFixtures({
@@ -30,16 +58,15 @@ export function ResultsChart({ team }: { team: schemas["TeamRead"] }) {
     team: team.name
   }, { suspense: true })
 
-  // Get raw fixture data
+  const [hoveredGameweek, setHoveredGameweek] = React.useState<number | null>(null)
+
   const fixtureItems = (data as schemas["FixtureReadPagination"])?.items ?? []
 
-  // Transform the data for better charting
   const chartData = fixtureItems.map(fixture => {
     const teamName = team.name
     const wasHome = fixture.home_team.name === teamName
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
-    // Calculate goals for and against
     let goalsFor = 0
     let goalsAgainst = 0
 
@@ -56,55 +83,120 @@ export function ResultsChart({ team }: { team: schemas["TeamRead"] }) {
     return {
       gameweek: fixture.gameweek,
       date: fixture.date,
-      opponentTeam: opponentTeam.name,
+      opponentId: opponentTeam.id,
       opponentCode: opponentTeam.tricode,
       wasHome,
       goalsFor,
       goalsAgainst,
       result: fixture.result,
       forecast: fixture.forecast,
-      // Additional derived data
       venue: wasHome ? "Home" : "Away",
-      // Simple win/loss/draw calculation
-      outcome: fixture.result
+      home_team: fixture.home_team,
+      away_team: fixture.away_team,
+      winner: fixture.result
         ? (goalsFor > goalsAgainst
-            ? "Win"
+            ? (wasHome ? "H" : "A")
             : goalsFor < goalsAgainst
-              ? "Loss"
-              : "Draw")
+              ? (wasHome ? "A" : "H")
+              : null)
         : null
     }
   })
-
-  // Sort by gameweek or date for chronological display
-  .sort((a, b) => {
-    return (a.gameweek ?? 0) - (b.gameweek ?? 0)
-  })
-
-  // Take only the last 10 games
-  .slice(-10)
 
   return (
     <ChartCard title="Recent Form" description="Last 10 games">
       <ChartContainer
         config={chartConfig}
-        className="aspect-[5/1] w-full"
+        className="aspect-[4/1] w-full"
       >
-        <BarChart accessibilityLayer data={chartData}>
+        <LineChart
+          accessibilityLayer
+          data={chartData}
+          margin={{
+            left: 24,
+            right: 24,
+            bottom: 12,
+          }}
+          onMouseMove={(e) => {
+            if (e?.activePayload?.[0]) {
+              setHoveredGameweek(e.activePayload[0].payload.gameweek);
+            }
+          }}
+          onMouseLeave={() => setHoveredGameweek(null)}
+        >
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="opponentCode"
             tickLine={false}
-            tickMargin={10}
+            tickMargin={12}
             axisLine={false}
+            tick={(props) => {
+              const { x, y, payload } = props;
+              const data = chartData[payload.index];
+              const isHovered = hoveredGameweek === data.gameweek;
+              return (
+                <g transform={`translate(${x},${y})`}>
+                  <image
+                    href={`${CONFIG.SUPABASE_BUCKET_URL}/badges/${data.opponentId}.png`}
+                    x={-12}
+                    y={0}
+                    width={24}
+                    height={24}
+                    style={{
+                      opacity: hoveredGameweek === null ? 1 : (isHovered ? 1 : 0.4),
+                      transition: 'all 0.2s ease-in-out',
+                    }}
+                  />
+                </g>
+              );
+            }}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            hide={true}
+            domain={[0, 5]}
+            ticks={[0, 1, 2, 3, 4, 5]}
           />
           <ChartTooltip
             cursor={false}
-            content={<ChartTooltipContent indicator="dashed" />}
+            content={({ active, payload }) => toolTip({ active, payload })}
           />
-          <Bar dataKey="goalsFor" fill="var(--color-forGoals)" radius={4} />
-          <Bar dataKey="goalsAgainst" fill="var(--color-againstGoals)" radius={4} />
-        </BarChart>
+          <Line
+            dataKey="goalsAgainst"
+            type="natural"
+            stroke="var(--color-againstGoals)"
+            strokeWidth={2}
+            dot={{
+              fill: "var(--color-againstGoals)",
+              opacity: 1
+            }}
+            activeDot={{
+              r: 6
+            }}
+            style={{
+              opacity: hoveredGameweek === null ? 1 : 0.4,
+              transition: 'opacity 0.2s ease-in-out'
+            }}
+          />
+          <Line
+            dataKey="goalsFor"
+            type="natural"
+            stroke="var(--color-forGoals)"
+            strokeWidth={2}
+            dot={{
+              fill: "var(--color-forGoals)",
+              opacity: 1
+            }}
+            activeDot={{
+              r: 6
+            }}
+            style={{
+              opacity: hoveredGameweek === null ? 1 : 0.4,
+              transition: 'opacity 0.2s ease-in-out'
+            }}
+          />
+        </LineChart>
       </ChartContainer>
     </ChartCard>
   )

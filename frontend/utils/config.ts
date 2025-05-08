@@ -7,6 +7,7 @@ if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
 const webDomain: string = webURL.host
 const dashboardDomain: string = `dashboard.${webDomain}`
 const dashboardURL: string = `${webURL.protocol}//${dashboardDomain}`
+const supabaseBucketURL: string = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`
 
 export const CONFIG = {
     CURRENT_SEASON: "2324",
@@ -15,4 +16,5 @@ export const CONFIG = {
     DASHBOARD_DOMAIN: dashboardDomain,
     DASHBOARD_URL: dashboardURL,
     SENTRY_DSN: process.env.SENTRY_DSN,
+    SUPABASE_BUCKET_URL: supabaseBucketURL,
 }

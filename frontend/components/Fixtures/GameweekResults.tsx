@@ -9,6 +9,7 @@ import {
 import { FormattedDate } from "@/components/Fixtures/FormattedDate"
 import Link from "next/link"
 import Image from "next/image"
+import { CONFIG } from "@/utils/config"
 
 interface GameweekResultsProps {
   fixtures: schemas["FixtureRead"][]
@@ -66,7 +67,7 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                           <span className="font-semibold text-base truncate">{fixture.home_team.short_name}</span>
                           <div className="w-8 h-8 relative flex-shrink-0">
                             <Image
-                              src={`https://wqzqedgnpowfhveqdwhv.supabase.co/storage/v1/object/public/badges/${fixture.home_team.id}.png`}
+                              src={`${CONFIG.SUPABASE_BUCKET_URL}/badges/${fixture.home_team.id}.png`}
                               alt="Home Badge"
                               width={32}
                               height={32}
@@ -90,7 +91,7 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                         <Link href={`/teams/${fixture.away_team.id}`} className="flex items-center gap-3 hover:underline">
                           <div className="w-8 h-8 relative flex-shrink-0">
                             <Image
-                              src={`https://wqzqedgnpowfhveqdwhv.supabase.co/storage/v1/object/public/badges/${fixture.away_team.id}.png`}
+                              src={`${CONFIG.SUPABASE_BUCKET_URL}/badges/${fixture.away_team.id}.png`}
                               alt="Away Badge"
                               width={32}
                               height={32}
