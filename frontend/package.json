@@ -25,6 +25,7 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@sentry/cli": "^2.43.1",
     "@sentry/nextjs": "^9.15.0",
+    "@supabase/auth-js": "^2.69.1",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tanstack/react-query": "^5.74.3",
