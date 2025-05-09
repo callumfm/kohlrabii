@@ -30,7 +30,10 @@ class AppConfig(BaseSettings):
     SENTRY_DSN: str
     SUPABASE_URL: str
     SUPABASE_SERVICE_KEY: str
+
     FRONTEND_URL: str
+    FRONTEND_PREVIEW_URL: str = r"https://kohlrabii-[a-z0-9]+-kohlrabii\.vercel\.app"
+
     JWT_ALGORITHM: str = "HS256"
     DATA_DIR: Path = Path(__file__).parent.parent / "data"
 

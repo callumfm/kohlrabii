@@ -100,6 +100,7 @@ async def add_process_time_header(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[config.FRONTEND_URL],
+    allow_origin_regex=config.FRONTEND_PREVIEW_URL,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
