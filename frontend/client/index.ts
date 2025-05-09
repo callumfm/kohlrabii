@@ -149,8 +149,6 @@ export interface components {
             name: string;
             /** Short Name */
             short_name: string;
-            /** Badge Url */
-            readonly badge_url: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -302,9 +300,3 @@ export interface operations {
         };
     };
 }
-type ReadonlyArray<T> = [
-    Exclude<T, undefined>
-] extends [
-    any[]
-] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const pathsApiV1FixturesGetParametersQuerySeasonValues: ReadonlyArray<paths["/api/v1/fixtures"]["get"]["parameters"]["query"]["season"]> = ["1516", "1617", "1718", "1819", "1920", "2021", "2122", "2223", "2324"];
