@@ -8,8 +8,8 @@ export async function middleware(request: NextRequest) {
   const host = getEffectiveHost(request)
   const path = getFullPath(request)
 
-  // Handle dashboard domain requests
-  if (host === CONFIG.DASHBOARD_DOMAIN) {
+  // Handle dashboard requests (either by subdomain or path in preview)
+  if (host === CONFIG.DASHBOARD_DOMAIN || (CONFIG.IS_PREVIEW && path.startsWith('/dashboard'))) {
     // Handle authentication redirects for non-API routes
     if (!request.nextUrl.pathname.startsWith('/api/')) {
       const authRedirect = handleAuthRedirects(user, path, request.url)
@@ -28,7 +28,6 @@ export async function middleware(request: NextRequest) {
   return response
 }
 
-// Helper function to get the effective host, handling the dashboard subdomain edge case
 function getEffectiveHost(request: NextRequest): string {
   let host = request.headers.get("host") || ""
 
@@ -43,20 +42,17 @@ function getEffectiveHost(request: NextRequest): string {
   return host
 }
 
-// Helper function to get the full path including search params
 function getFullPath(request: NextRequest): string {
   const searchParams = request.nextUrl.searchParams.toString()
   return `${request.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`
 }
 
-// Helper function to handle authentication redirects
 function handleAuthRedirects(user: UserResponse, path: string, requestUrl: string) {
   // Redirect unauthenticated users to sign-in
   if (user.error && path !== "/sign-in") {
     return NextResponse.redirect(new URL("/sign-in", requestUrl))
   }
 
-  // Redirect authenticated users away from sign-in
   if (!user.error && path === "/sign-in") {
     return NextResponse.redirect(new URL("/", requestUrl))
   }
@@ -64,7 +60,6 @@ function handleAuthRedirects(user: UserResponse, path: string, requestUrl: strin
   return null
 }
 
-// Helper function to rewrite paths
 function rewritePath(prefix: string, path: string, requestUrl: string) {
   return NextResponse.rewrite(
     new URL(`${prefix}${path === "/" ? "" : path}`, requestUrl)
