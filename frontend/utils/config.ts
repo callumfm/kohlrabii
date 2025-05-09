@@ -1,10 +1,5 @@
 const isPreview = process.env.VERCEL_ENV === "preview"
-let webURL: URL = new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
-
-if (isPreview && process.env.VERCEL_URL) {
-    webURL = new URL(`https://${process.env.VERCEL_URL}`)
-}
-
+const webURL: URL = (isPreview && process.env.VERCEL_URL) ? new URL(`https://${process.env.VERCEL_URL}`) : new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
 const webDomain: string = webURL.host
 const dashboardDomain: string = isPreview ? webDomain : `dashboard.${webDomain}`
 const dashboardURL: string = isPreview ? `${webURL.protocol}//${webDomain}/dashboard` : `${webURL.protocol}//${dashboardDomain}`
