@@ -1,8 +1,19 @@
 const isPreview = process.env.VERCEL_ENV === "preview"
-const webURL: URL = (isPreview && process.env.VERCEL_URL) ? new URL(`https://${process.env.VERCEL_URL}`) : new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
+const vercelURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
+
+const webURL: URL = isPreview && vercelURL
+    ? new URL(vercelURL)
+    : new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
+
 const webDomain: string = webURL.host
-const dashboardDomain: string = isPreview ? webDomain : `dashboard.${webDomain}`
-const dashboardURL: string = isPreview ? `${webURL.protocol}//${webDomain}/dashboard` : `${webURL.protocol}//${dashboardDomain}`
+const dashboardDomain: string = isPreview
+    ? webDomain
+    : `dashboard.${webDomain}`
+
+const dashboardURL: string = isPreview
+    ? `${webURL.protocol}//${webDomain}/dashboard`
+    : `${webURL.protocol}//${dashboardDomain}`
+
 const supabaseBucketURL: string = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`
 
 export const CONFIG = {

@@ -17,6 +17,11 @@ export async function middleware(request: NextRequest) {
       if (authRedirect) return authRedirect
     }
 
+    // No rewrite for Vercel previews
+    if (CONFIG.IS_PREVIEW) {
+      return response
+    }
+
     // Rewrite to `/dashboard` route
     return rewritePath('/dashboard', path, request.url)
   }
