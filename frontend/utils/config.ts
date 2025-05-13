@@ -27,3 +27,5 @@ export const CONFIG = {
     SENTRY_DSN: process.env.SENTRY_DSN,
     SUPABASE_BUCKET_URL: supabaseBucketURL,
 }
+
+console.log(CONFIG)

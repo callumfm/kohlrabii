@@ -7,12 +7,15 @@ export async function middleware(request: NextRequest) {
   const { user, response } = await updateSession(request)
   const host = getEffectiveHost(request)
   const path = getFullPath(request)
-  const isDashboardRequest = CONFIG.IS_PREVIEW ? path.startsWith('/dashboard') : host === CONFIG.DASHBOARD_DOMAIN
+
+  const isDashboardRequest = CONFIG.IS_PREVIEW
+    ? path.startsWith("/dashboard")
+    : host === CONFIG.DASHBOARD_DOMAIN
 
   // Handle dashboard requests (either by subdomain or path in preview)
   if (isDashboardRequest) {
     // Handle authentication redirects for non-API routes
-    if (!request.nextUrl.pathname.startsWith('/api/')) {
+    if (!path.includes("/api/")) {
       const authRedirect = handleAuthRedirects(user, path)
       if (authRedirect) return authRedirect
     }
@@ -23,12 +26,12 @@ export async function middleware(request: NextRequest) {
     }
 
     // Rewrite to `/dashboard` route
-    return rewritePath('/dashboard', path, request.url)
+    return rewritePath("/dashboard", path, request.url)
   }
 
   // Handle website domain requests
   if (host === CONFIG.WEB_DOMAIN) {
-    return rewritePath('/website', path, request.url)
+    return rewritePath("/website", path, request.url)
   }
 
   return response
