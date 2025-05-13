@@ -30,8 +30,6 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
     fixturesByDate[date].push(fixture)
   })
 
-  console.log(fixtures[0].forecast)
-
   return (
     <div className="space-y-10">
       {Object.entries(fixturesByDate).map(([date, dateFixtures]) => (

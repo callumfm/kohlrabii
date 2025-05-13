@@ -19,17 +19,19 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useUser } from "@/hooks/User/useUser"
+import { dashboardPath } from "@/utils/path"
+import Link from "next/link"
 
 const data = {
   navMain: [
     {
       title: "Fixtures",
-      url: "/fixtures",
+      url: dashboardPath("/fixtures"),
       icon: Calendar1Icon,
     },
     {
       title: "Teams",
-      url: "/teams",
+      url: dashboardPath("/teams"),
       icon: UsersRoundIcon,
     },
   ],
@@ -57,10 +59,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href={dashboardPath("/")}>
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">Kohlrabii</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -9,10 +9,6 @@ export async function middleware(request: NextRequest) {
   const path = getFullPath(request)
   const isDashboardRequest = CONFIG.IS_PREVIEW ? path.startsWith('/dashboard') : host === CONFIG.DASHBOARD_DOMAIN
 
-  console.log("PATH", path)
-  console.log("HOST", host)
-  console.log("DASHBOARD REQUEST", isDashboardRequest)
-
   // Handle dashboard requests (either by subdomain or path in preview)
   if (isDashboardRequest) {
     // Handle authentication redirects for non-API routes
