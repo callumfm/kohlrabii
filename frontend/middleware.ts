@@ -9,11 +9,15 @@ export async function middleware(request: NextRequest) {
   const path = getFullPath(request)
   const isDashboardRequest = CONFIG.IS_PREVIEW ? path.startsWith('/dashboard') : host === CONFIG.DASHBOARD_DOMAIN
 
+  console.log("PATH", path)
+  console.log("HOST", host)
+  console.log("DASHBOARD REQUEST", isDashboardRequest)
+
   // Handle dashboard requests (either by subdomain or path in preview)
   if (isDashboardRequest) {
     // Handle authentication redirects for non-API routes
     if (!request.nextUrl.pathname.startsWith('/api/')) {
-      const authRedirect = handleAuthRedirects(user, path, request.url)
+      const authRedirect = handleAuthRedirects(user, path)
       if (authRedirect) return authRedirect
     }
 
@@ -53,14 +57,15 @@ function getFullPath(request: NextRequest): string {
   return `${request.nextUrl.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`
 }
 
-function handleAuthRedirects(user: UserResponse, path: string, requestUrl: string) {
+function handleAuthRedirects(user: UserResponse, path: string) {
   // Redirect unauthenticated users to sign-in
-  if (user.error && path !== "/sign-in") {
-    return NextResponse.redirect(new URL("/sign-in", requestUrl))
+  if (user.error && !path.endsWith("/sign-in")) {
+    return NextResponse.redirect(new URL(`${CONFIG.DASHBOARD_URL}/sign-in`))
   }
 
-  if (!user.error && path === "/sign-in") {
-    return NextResponse.redirect(new URL("/", requestUrl))
+  // Redirect authenticated users to dashboard
+  if (!user.error && path.endsWith("/sign-in")) {
+    return NextResponse.redirect(new URL(CONFIG.DASHBOARD_URL))
   }
 
   return null
