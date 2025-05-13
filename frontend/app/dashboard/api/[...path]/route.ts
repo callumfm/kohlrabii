@@ -1,13 +1,18 @@
+import { CONFIG } from '@/utils/config'
 import { unwrap } from '@/utils/api/client'
 import { getServerSideAPI } from '@/utils/client/serverside'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const GET = async (request: NextRequest) => {
+    const api = await getServerSideAPI()
     const { ...params } = Object.fromEntries(
         request.nextUrl.searchParams
     )
-    const pathname = request.url.split('?')[0].replace(request.nextUrl.origin, '')
-    const api = await getServerSideAPI()
+    let pathname = request.url.split('?')[0].replace(request.nextUrl.origin, '')
+
+    if (CONFIG.IS_PREVIEW) {
+        pathname = pathname.replace("/dashboard", "")
+    }
 
     const data = await unwrap(
         api.GET(pathname as any, {
