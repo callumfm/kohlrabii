@@ -8,17 +8,18 @@ import GameweekSelector from "@/components/Fixtures/GameweekSelector"
 import GameweekResultsSkeleton from "@/components/Fixtures/GameweekResultsSkeleton"
 import { SeasonSelector } from "@/components/Fixtures/SeasonSelector"
 import { useDebouncedCallback } from "use-debounce"
-import { useSearchParams, usePathname, useRouter, notFound } from "next/navigation"
+import { usePathname, useRouter, notFound } from "next/navigation"
 import { Season, Team } from "@/client/types"
 import { TeamSelector } from "@/components/Fixtures/TeamSelector"
+import { useSeasonMetadata } from "@/providers/SeasonMetadata"
 
-type TFixturesProps = {
+type TResultsProps = {
   gameweek: number
   season: Season
   team?: Team | null
 }
 
-const ResultsContent = ({ gameweek, season, team }: TFixturesProps) => {
+const ResultsContent = ({ gameweek, season, team }: TResultsProps) => {
   const { data, error } = useFixtures(
     { gameweek, season, team: team?.name },
     { suspense: true }
@@ -36,26 +37,27 @@ const ResultsContent = ({ gameweek, season, team }: TFixturesProps) => {
   return <GameweekResults fixtures={fixturesData} />
 }
 
-const FixturesContent: FC<TFixturesProps> = ({ gameweek, season }) => {
-  const searchParams = useSearchParams()
+type TFixturesProps = {
+  initialGameweek?: number
+  initialSeason?: Season
+}
+
+const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason }) => {
   const pathname = usePathname()
   const { replace } = useRouter()
+  const { latestSeason, latestGameweek } = useSeasonMetadata()
 
-  const initialGameweek = Number(searchParams.get('gameweek')) || gameweek
-  const initialSeason = searchParams.get('season') || season
-
-  const [selectedGameweek, setSelectedGameweek] = useState<number>(initialGameweek)
-  const [currentGameweek, setCurrentGameweek] = useState<number>(initialGameweek)
-  const [currentSeason, setCurrentSeason] = useState<Season>(initialSeason as Season)
+  const [selectedGameweek, setSelectedGameweek] = useState<number>(initialGameweek || latestGameweek)
+  const [currentGameweek, setCurrentGameweek] = useState<number>(selectedGameweek)
+  const [currentSeason, setCurrentSeason] = useState<Season>(initialSeason || latestSeason)
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null)
 
   const updateURL = useDebouncedCallback((gw: number, season: Season, team: Team | null = null) => {
     setCurrentGameweek(gw)
-    const params = new URLSearchParams(searchParams)
-    params.set("gameweek", gw.toString())
-    params.set("season", season)
-    if (team) { params.set("team", team.tricode) }
-
+    const params = new URLSearchParams()
+    params.set("gw", gw.toString())
+    params.set("s", season)
+    if (team) { params.set("t", team.id.toString()) }
     replace(`${pathname}?${params.toString()}`)
   }, 300)
 

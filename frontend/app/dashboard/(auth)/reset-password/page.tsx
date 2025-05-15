@@ -1,4 +1,4 @@
-import { resetPasswordAction } from "@/app/actions"
+import { resetPasswordAction } from "@/server/auth"
 import { FormMessage, type Message } from "@/components/Form/FormMessage"
 import { SubmitButton } from "@/components/Button/SubmitButton"
 import { Input } from "@/components/ui/input"

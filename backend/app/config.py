@@ -3,6 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, no_type_check
 
+# from datetime import datetime
 from pydantic import computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -40,6 +41,23 @@ class AppConfig(BaseSettings):
 
 class FootballConfig(BaseSettings):
     model_config = get_model_config()
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def CURRENT_SEASON(self) -> str:
+        # current_time = datetime.now()
+        # if current_time.month > 5:
+        #     start_year = current_time.year
+        # else:
+        #     start_year = current_time.year - 1
+        # end_year = start_year + 1
+        # return f"{str(start_year)[2:]}{str(end_year)[2:]}"
+        return "2324"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def CURRENT_GAMEWEEK(self) -> int:
+        return 38
 
     SEASONS: list[str] = [
         "1516",

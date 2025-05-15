@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'

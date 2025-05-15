@@ -1,4 +1,6 @@
-import { Client, schemas, unwrap } from './api/client'
+"use server"
+
+import { Client, schemas, unwrap } from '../utils/api/client'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
 import { operations } from '@/client'

@@ -1,14 +1,11 @@
 import { Analytics } from "@vercel/analytics/react"
 import { Geist } from "next/font/google"
 import localFont from "next/font/local"
+import { CONFIG } from "@/utils/config"
 import "./globals.css"
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000"
-
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(CONFIG.WEB_URL),
   title: "Kohlrabii",
   description: "Premier League football predictive modelling and analytics",
 }

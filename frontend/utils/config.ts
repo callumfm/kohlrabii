@@ -1,5 +1,7 @@
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
-const vercelURL = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : undefined
+const vercelURL = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : undefined
 
 const webURL: URL = isPreview && vercelURL
     ? new URL(vercelURL)

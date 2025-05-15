@@ -26,7 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { signOutAction } from "@/app/actions"
+import { signOutAction } from "@/server/auth"
 
 export type TUser = {
   name: string

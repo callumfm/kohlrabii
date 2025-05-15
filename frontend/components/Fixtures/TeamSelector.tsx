@@ -29,9 +29,8 @@ type TeamSelectorProps = {
 
 export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProps) {
   const [open, setOpen] = React.useState(false)
-  const { data: teamsData } = useTeams({ season })
-
   const displayText = currentTeam ? currentTeam.tricode : "Filter team"
+  const { data: teams } = useTeams({ season })
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -68,7 +67,7 @@ export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProp
                   )}
                 />
               </CommandItem>
-              {teamsData?.map((team) => (
+              {teams?.map((team) => (
                 <CommandItem
                   key={team.tricode}
                   value={team.name}
