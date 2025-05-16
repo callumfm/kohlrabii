@@ -95,7 +95,13 @@ def upload_badge_images_to_bucket(team_badges: list[dict[str, str]]) -> None:
         with open(local_file, "rb") as f:
             try:
                 supabase_client.storage.from_("badges").upload(
-                    bucket_file, f, file_options={"content-type": "image/png"}
+                    bucket_file,
+                    f,
+                    file_options={
+                        "content-type": "image/png",
+                        "cache-control": "public, max-age=1000000, immutable",
+                        "upsert": "true",
+                    },
                 )
             except Exception as e:
                 logger.error(

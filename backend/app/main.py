@@ -1,16 +1,11 @@
 from fastapi import APIRouter, FastAPI
-from fastapi.exceptions import HTTPException, RequestValidationError
 from starlette.middleware.cors import CORSMiddleware
 
 from app.config import config
 from app.enums import Environment
+from app.exceptions import add_exception_handlers
 from app.fixtures.api import router as fixtures_router
-from app.middleware import (
-    DbSessionMiddleware,
-    HttpExceptionHandler,
-    ProcessTimeMiddleware,
-    RequestValidationHandler,
-)
+from app.middleware import DbSessionMiddleware, ProcessTimeMiddleware
 from app.seasons.api import router as seasons_router
 from app.sentry import configure_sentry
 from app.teams.api import router as teams_router
@@ -25,8 +20,7 @@ app = FastAPI(
 )
 
 # Exception handlers
-app.add_exception_handler(RequestValidationError, RequestValidationHandler.handle)
-app.add_exception_handler(HTTPException, HttpExceptionHandler.handle)
+add_exception_handlers(app)
 
 # Middleware
 app.add_middleware(DbSessionMiddleware)

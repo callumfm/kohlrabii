@@ -4,9 +4,6 @@ from contextvars import ContextVar
 from typing import Final
 from uuid import uuid1
 
-from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import HTTPException, RequestValidationError
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import scoped_session, sessionmaker
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -23,37 +20,6 @@ _request_id_ctx_var: ContextVar[str | None] = ContextVar(
 
 def get_request_id() -> str | None:
     return _request_id_ctx_var.get()
-
-
-class HttpExceptionHandler:
-    @staticmethod
-    async def handle(
-        request: Request,  # noqa: ARG001
-        exc: HTTPException,
-    ) -> JSONResponse:
-        logger.error(f"Request ID: {get_request_id()} raised an http exception: {exc}")
-        return JSONResponse(
-            status_code=exc.status_code,
-            content={"message": exc.detail},
-        )
-
-
-class RequestValidationHandler:
-    @staticmethod
-    async def handle(
-        request: Request,  # noqa: ARG001
-        exc: RequestValidationError,
-    ) -> JSONResponse:
-        logger.error(
-            f"Request ID: {get_request_id()} raised a validation exception: {exc}"
-        )
-        return JSONResponse(
-            status_code=422,
-            content={
-                "error": type(exc).__name__,
-                "detail": jsonable_encoder(exc.errors()),
-            },
-        )
 
 
 class ProcessTimeMiddleware(BaseHTTPMiddleware):

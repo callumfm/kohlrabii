@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.database.utils import sort_and_paginate
 from app.fixtures.models import Fixture, FixtureCreate, FixtureQuery, FixtureUpdate
+from app.teams.models import Team
 from app.teams.service import get_team_from_season_id
 
 
@@ -98,8 +99,8 @@ def get_seasons_fixtures(*, session: Session, season: str) -> list[Fixture]:
     return (
         session.query(Fixture)
         .options(
-            joinedload(Fixture.home_team).load_only("name"),
-            joinedload(Fixture.away_team).load_only("name"),
+            joinedload(Fixture.home_team).load_only(Team.name),
+            joinedload(Fixture.away_team).load_only(Team.name),
         )
         .filter_by(season=season)
         .all()

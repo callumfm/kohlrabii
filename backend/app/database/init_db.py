@@ -7,7 +7,7 @@ from app.database.core import get_session
 from app.fixtures.fill import make_fixtures_table
 from app.logger import logger
 from app.results.fill import make_results_table
-from app.seasons import sort_seasons
+from app.seasons.service import sort_seasons
 from app.teams.badges.fill import make_team_badges_bucket
 from app.teams.fill import make_teams_tables
 from app.teams.models import Team

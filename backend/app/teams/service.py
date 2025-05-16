@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from functools import lru_cache
 
 from sqlalchemy import select
@@ -29,7 +30,7 @@ def get_team_from_name(*, session: Session, team_name: str) -> Team:
     return team
 
 
-def get_seasons_teams(*, session: Session, season: str) -> list[Team]:
+def get_seasons_teams(*, session: Session, season: str) -> Sequence[Team]:
     """Get all teams for a specific season."""
     return session.scalars(
         select(Team)
