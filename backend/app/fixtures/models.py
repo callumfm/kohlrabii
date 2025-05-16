@@ -4,7 +4,6 @@ from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.core import Base
-from app.fixtures.forecasts.models import FixtureForecastRead
 from app.models import BaseQuery, KolModel, Pagination
 from app.results.models import ResultRead
 from app.teams.models import TeamRead
@@ -53,7 +52,7 @@ class FixtureQuery(BaseQuery):
     season: Season | None = None
     gameweek: int | None = NullGameweek
     date: str | None = None
-    team: str | None = None
+    team_id: int | None = None
     sort_by: str | None = "date"
     sort_desc: bool = False
 
@@ -79,7 +78,7 @@ class FixtureRead(KolModel):
     home_team: TeamRead
     away_team: TeamRead
     result: ResultRead | None
-    forecast: FixtureForecastRead | None
+    # forecast: FixtureForecastRead | None
 
 
 class FixtureReadPagination(Pagination):

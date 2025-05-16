@@ -1,12 +1,13 @@
 from functools import lru_cache
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.teams.models import SeasonTeam, Team
 
 
 @lru_cache(maxsize=20)
-def get_team_from_id(*, session: Session, season: str, team_id: int) -> Team:
+def get_team_from_season_id(*, session: Session, season: str, team_id: int) -> Team:
     """Get a team for a specific season by team_id."""
     season_team = (
         session.query(SeasonTeam)
@@ -30,5 +31,8 @@ def get_team_from_name(*, session: Session, team_name: str) -> Team:
 
 def get_seasons_teams(*, session: Session, season: str) -> list[Team]:
     """Get all teams for a specific season."""
-    season_teams = session.query(SeasonTeam).filter(SeasonTeam.season == season).all()
-    return [st.team for st in season_teams]
+    return session.scalars(
+        select(Team)
+        .join(SeasonTeam, SeasonTeam.team_id == Team.id)
+        .where(SeasonTeam.season == season)
+    ).all()

@@ -16,13 +16,15 @@ import { useSeasonMetadata } from "@/providers/SeasonMetadata"
 type TResultsProps = {
   gameweek: number
   season: Season
-  team?: Team | null
+  team_id?: number | null
+  initialFixtures: schemas['FixtureReadPagination']
 }
 
-const ResultsContent = ({ gameweek, season, team }: TResultsProps) => {
+const ResultsContent = ({ gameweek, season, team_id, initialFixtures }: TResultsProps) => {
   const { data, error } = useFixtures(
-    { gameweek, season, team: team?.name },
-    { suspense: true }
+    { gameweek, season, team_id },
+    { suspense: true },
+    initialFixtures
   )
 
   if (
@@ -38,11 +40,12 @@ const ResultsContent = ({ gameweek, season, team }: TResultsProps) => {
 }
 
 type TFixturesProps = {
+  initialFixtures: schemas['FixtureReadPagination']
   initialGameweek?: number
   initialSeason?: Season
 }
 
-const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason }) => {
+const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, initialFixtures }) => {
   const pathname = usePathname()
   const { replace } = useRouter()
   const { latestSeason, latestGameweek } = useSeasonMetadata()
@@ -57,7 +60,7 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason })
     const params = new URLSearchParams()
     params.set("gw", gw.toString())
     params.set("s", season)
-    if (team) { params.set("t", team.id.toString()) }
+    // if (team) { params.set("t", team.id.toString()) }
     replace(`${pathname}?${params.toString()}`)
   }, 300)
 
@@ -98,7 +101,8 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason })
         <ResultsContent
           gameweek={currentGameweek}
           season={currentSeason}
-          team={currentTeam}
+          team_id={currentTeam?.id}
+          initialFixtures={initialFixtures}
         />
       </Suspense>
     </div>

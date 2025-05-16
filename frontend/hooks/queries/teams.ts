@@ -1,5 +1,5 @@
 import { api } from '@/utils/client'
-import { operations, unwrap } from '@/utils/api/client'
+import { operations, unwrap, schemas } from '@/utils/api/client'
 import { useQuery } from '@tanstack/react-query'
 
 export const useTeams = (
@@ -22,6 +22,7 @@ export const useTeams = (
 
 export const useTeam = (
   parameters: operations['teams_get_team_by_id']['parameters']['path'],
+  initialData?: schemas['TeamRead']
 ) =>
   useQuery({
     queryKey: ['teams', parameters],
@@ -35,4 +36,5 @@ export const useTeam = (
           },
         }),
       ),
+    initialData: initialData
   })

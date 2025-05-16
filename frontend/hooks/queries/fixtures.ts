@@ -1,10 +1,11 @@
 import { api } from '@/utils/client'
-import { operations, unwrap } from '@/utils/api/client'
+import { operations, unwrap, schemas } from '@/utils/api/client'
 import { useQuery } from '@tanstack/react-query'
 
 export const useFixtures = (
   parameters?: operations['fixtures_get_fixtures_query']['parameters']['query'],
-  options?: { suspense?: boolean }
+  options?: { suspense?: boolean },
+  initialData?: schemas['FixtureReadPagination']
 ) =>
   useQuery({
     queryKey: ['fixtures', parameters],
@@ -18,5 +19,6 @@ export const useFixtures = (
           },
         }),
       ),
+    initialData: initialData,
     ...(options?.suspense ? { suspense: true } : {}),
   })

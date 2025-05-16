@@ -9,7 +9,6 @@ import {
   ChartTooltip,
 } from "@/components/ui/chart"
 import { ChartCard } from "./ChartCard"
-import { useFixtures } from "@/hooks/queries/fixtures"
 import { schemas } from "@/utils/api/client"
 import { CONFIG } from "@/utils/config"
 
@@ -52,19 +51,17 @@ const toolTip = ({ active, payload }: { active: boolean | undefined, payload: an
   )
 }
 
-export function ResultsChart({ team }: { team: schemas["TeamRead"] }) {
-  const { data, error } = useFixtures({
-    season: "2324",
-    team: team.name
-  }, { suspense: true })
+interface ResultsChartProps {
+  results: schemas["FixtureReadPagination"]
+  team_name: string
+}
 
+export function ResultsChart({ results, team_name }: ResultsChartProps) {
   const [hoveredGameweek, setHoveredGameweek] = React.useState<number | null>(null)
-
-  const fixtureItems = (data as schemas["FixtureReadPagination"])?.items ?? []
+  const fixtureItems = (results as schemas["FixtureReadPagination"])?.items ?? []
 
   const chartData = fixtureItems.map(fixture => {
-    const teamName = team.name
-    const wasHome = fixture.home_team.name === teamName
+    const wasHome = fixture.home_team.name === team_name
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
     let goalsFor = 0

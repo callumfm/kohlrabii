@@ -9,7 +9,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { ChartCard } from "./ChartCard"
-import { useFixtures } from "@/hooks/queries/fixtures"
 import { schemas } from "@/utils/api/client"
 
 const chartConfig = {
@@ -23,23 +22,18 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+interface FixturesChartProps {
+  fixtures: schemas["FixtureReadPagination"]
+  team_name: string
+}
 
-export function FixturesChart({ team }: { team: schemas["TeamRead"] }) {
-  const { data, error } = useFixtures({
-    season: "2324",
-    team: team.name
-  }, { suspense: true })
+export function FixturesChart({ fixtures, team_name }: FixturesChartProps) {
+  const fixtureItems = (fixtures as schemas["FixtureReadPagination"])?.items ?? []
 
-  // Get raw fixture data
-  const fixtureItems = (data as schemas["FixtureReadPagination"])?.items ?? []
-
-  // Transform the data for better charting
   const chartData = fixtureItems.map(fixture => {
-    const teamName = team.name
-    const wasHome = fixture.home_team.name === teamName
+    const wasHome = fixture.home_team.name === team_name
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
-    // Calculate goals for and against
     let goalsFor = 0
     let goalsAgainst = 0
 
@@ -63,9 +57,7 @@ export function FixturesChart({ team }: { team: schemas["TeamRead"] }) {
       goalsAgainst,
       result: fixture.result,
       forecast: fixture.forecast,
-      // Additional derived data
       venue: wasHome ? "Home" : "Away",
-      // Simple win/loss/draw calculation
       outcome: fixture.result
         ? (goalsFor > goalsAgainst
             ? "Win"
@@ -75,14 +67,6 @@ export function FixturesChart({ team }: { team: schemas["TeamRead"] }) {
         : null
     }
   })
-
-  // Sort by gameweek or date for chronological display
-  .sort((a, b) => {
-    return (a.gameweek ?? 0) - (b.gameweek ?? 0)
-  })
-
-  // Take only the last 10 games
-  .slice(-10)
 
   return (
     <ChartCard title="Upcoming Fixtures" description="Next 10 games">

@@ -1,5 +1,8 @@
-import { TeamContent } from "./content"
 
 export default function TeamsPage() {
-  return <TeamContent teamId={38} />
+  return (
+    <div>
+      <h1>Teams</h1>
+    </div>
+  )
 }

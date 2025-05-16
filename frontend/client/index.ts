@@ -202,7 +202,7 @@ export interface operations {
                 season?: ("1516" | "1617" | "1718" | "1819" | "1920" | "2021" | "2122" | "2223" | "2324") | null;
                 gameweek?: number | null;
                 date?: string | null;
-                team?: string | null;
+                team_id?: number | null;
             };
             header?: never;
             path?: never;

@@ -1,8 +1,42 @@
-from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from typing import Any
 
-from app.fixtures.models import Fixture, FixtureCreate, FixtureUpdate
-from app.teams.service import get_team_from_id
+from sqlalchemy import or_
+from sqlalchemy.orm import Session, joinedload
+
+from app.database.utils import sort_and_paginate
+from app.fixtures.models import Fixture, FixtureCreate, FixtureQuery, FixtureUpdate
+from app.teams.service import get_team_from_season_id
+
+
+def get_fixtures_query(*, session: Session, query_in: FixtureQuery) -> dict[str, Any]:
+    query = session.query(Fixture).options(
+        joinedload(Fixture.home_team),
+        joinedload(Fixture.away_team),
+        joinedload(Fixture.result),
+    )
+
+    if query_in.season:
+        query = query.filter_by(season=query_in.season)
+
+    if query_in.gameweek:
+        query = query.filter_by(gameweek=query_in.gameweek)
+
+    if query_in.team_id:
+        query = query.filter(
+            or_(
+                Fixture.home_team_id == query_in.team_id,
+                Fixture.away_team_id == query_in.team_id,
+            )
+        )
+
+    if query_in.date:
+        query = query.filter_by(date=query_in.date)
+
+    return sort_and_paginate(
+        query=query,
+        table=Fixture,
+        query_in=query_in,
+    )
 
 
 def get_fixture(
@@ -15,7 +49,9 @@ def get_fixture(
     other_team: str | None,
 ) -> Fixture:
     if isinstance(team, int):
-        team = get_team_from_id(session=session, season=season, team_id=team).name
+        team = get_team_from_season_id(
+            session=session, season=season, team_id=team
+        ).name
 
     query = session.query(Fixture).filter_by(season=season)
     if gameweek:
@@ -29,7 +65,7 @@ def get_fixture(
 
     if other_team:
         if isinstance(other_team, str):
-            other_team = get_team_from_id(
+            other_team = get_team_from_season_id(
                 session=session, season=season, team_id=other_team
             ).name
 
@@ -58,7 +94,16 @@ def get_fixture(
 
 
 def get_seasons_fixtures(*, session: Session, season: str) -> list[Fixture]:
-    return session.query(Fixture).filter_by(season=season).all()
+    # TODO: Do we need results here? Limit the scope to just id, teams and date?
+    return (
+        session.query(Fixture)
+        .options(
+            joinedload(Fixture.home_team).load_only("name"),
+            joinedload(Fixture.away_team).load_only("name"),
+        )
+        .filter_by(season=season)
+        .all()
+    )
 
 
 def create_fixture(*, session: Session, fixture_in: FixtureCreate) -> Fixture:
