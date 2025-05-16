@@ -1,7 +1,7 @@
 "use client"
 
-import { type FC, useState, Suspense } from "react"
-import { useFixtures } from "@/hooks/queries/fixtures"
+import { type FC, useState, Suspense, useMemo } from "react"
+import { useFixtures, fixturesKey, fetchFixtures } from "@/hooks/queries/fixtures"
 import { ClientResponseError, schemas } from "@/utils/api/client"
 import GameweekResults from "@/components/Fixtures/GameweekResults"
 import GameweekSelector from "@/components/Fixtures/GameweekSelector"
@@ -12,19 +12,18 @@ import { usePathname, useRouter, notFound } from "next/navigation"
 import { Season, Team } from "@/client/types"
 import { TeamSelector } from "@/components/Fixtures/TeamSelector"
 import { useSeasonMetadata } from "@/providers/SeasonMetadata"
+import { queryClient } from "@/utils/api/query"
 
 type TResultsProps = {
   gameweek: number
   season: Season
   team_id?: number | null
-  initialFixtures: schemas['FixtureReadPagination']
 }
 
-const ResultsContent = ({ gameweek, season, team_id, initialFixtures }: TResultsProps) => {
+const ResultsContent = ({ gameweek, season, team_id }: TResultsProps) => {
   const { data, error } = useFixtures(
-    { gameweek, season, team_id },
+    { season: season, gameweek: gameweek },
     { suspense: true },
-    initialFixtures
   )
 
   if (
@@ -36,16 +35,22 @@ const ResultsContent = ({ gameweek, season, team_id, initialFixtures }: TResults
 
   const fixturesData = (data as schemas["FixtureReadPagination"])?.items ?? []
 
-  return <GameweekResults fixtures={fixturesData} />
+  const filteredFixtures = useMemo(() => {
+    if (!team_id) return fixturesData
+    return fixturesData.filter(fixture =>
+      fixture.home_team.id === team_id || fixture.away_team.id === team_id
+    )
+  }, [fixturesData, team_id])
+
+  return <GameweekResults fixtures={filteredFixtures} />
 }
 
 type TFixturesProps = {
-  initialFixtures: schemas['FixtureReadPagination']
   initialGameweek?: number
   initialSeason?: Season
 }
 
-const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, initialFixtures }) => {
+const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason }) => {
   const pathname = usePathname()
   const { replace } = useRouter()
   const { latestSeason, latestGameweek } = useSeasonMetadata()
@@ -55,14 +60,21 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, i
   const [currentSeason, setCurrentSeason] = useState<Season>(initialSeason || latestSeason)
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null)
 
-  const updateURL = useDebouncedCallback((gw: number, season: Season, team: Team | null = null) => {
+  const updateURL = useDebouncedCallback((gw: number, season: Season) => {
     setCurrentGameweek(gw)
     const params = new URLSearchParams()
     params.set("gw", gw.toString())
     params.set("s", season)
-    // if (team) { params.set("t", team.id.toString()) }
-    replace(`${pathname}?${params.toString()}`)
+    // 'replace' causes a server refresh with duplicate request
+    window.history.pushState({}, '', `${pathname}?${params.toString()}`)
   }, 300)
+
+  const handleGameweekHover = (next_gw: number) => {
+    queryClient.prefetchQuery({
+      queryKey: fixturesKey({ season: currentSeason, gameweek: next_gw }),
+      queryFn: () => fetchFixtures({ season: currentSeason, gameweek: next_gw }),
+    })
+  }
 
   const handleGameweekChange = (gw: number) => {
     setSelectedGameweek(gw)
@@ -72,11 +84,6 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, i
   const handleSeasonChange = (season: Season) => {
     setCurrentSeason(season)
     updateURL(currentGameweek, season)
-  }
-
-  const handleTeamChange = (team: Team | null) => {
-      setCurrentTeam(team)
-      updateURL(currentGameweek, currentSeason, team)
   }
 
   return (
@@ -89,10 +96,11 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, i
         <GameweekSelector
           currentGameweek={selectedGameweek}
           onChange={handleGameweekChange}
+          onHover={handleGameweekHover}
         />
         <TeamSelector
           currentTeam={currentTeam}
-          onChange={handleTeamChange}
+          onChange={setCurrentTeam}
           season={currentSeason}
         />
       </div>
@@ -102,7 +110,6 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason, i
           gameweek={currentGameweek}
           season={currentSeason}
           team_id={currentTeam?.id}
-          initialFixtures={initialFixtures}
         />
       </Suspense>
     </div>

@@ -1,24 +1,32 @@
 import { api } from '@/utils/client'
-import { operations, unwrap, schemas } from '@/utils/api/client'
+import { operations, unwrap } from '@/utils/api/client'
 import { useQuery } from '@tanstack/react-query'
 
+type TParams = operations['fixtures_get_fixtures_query']['parameters']['query']
+
+export const fixturesKey = (parameters?: TParams) =>
+  // TODO: Unpack in same order
+  // ["fixtures", parameters] as const
+  ["fixtures", parameters?.season, parameters?.gameweek, parameters?.team_id] as const
+
+export const fetchFixtures = async (parameters: TParams) =>
+  unwrap(
+    api.GET('/api/v1/fixtures', {
+      params: {
+        query: {
+          ...(parameters || {}),
+        },
+      },
+    }),
+  )
+
 export const useFixtures = (
-  parameters?: operations['fixtures_get_fixtures_query']['parameters']['query'],
+  parameters?: TParams,
   options?: { suspense?: boolean },
-  initialData?: schemas['FixtureReadPagination']
 ) =>
   useQuery({
-    queryKey: ['fixtures', parameters],
-    queryFn: async () =>
-      unwrap(
-        api.GET('/api/v1/fixtures', {
-          params: {
-            query: {
-              ...(parameters || {}),
-            },
-          },
-        }),
-      ),
-    initialData: initialData,
+    queryKey: fixturesKey(parameters),
+    queryFn: () => fetchFixtures(parameters),
     ...(options?.suspense ? { suspense: true } : {}),
+    // dont speread options may override staleTime?
   })

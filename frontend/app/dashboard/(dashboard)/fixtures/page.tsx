@@ -3,8 +3,10 @@ import { Season } from "@/client/types"
 import { getLatestSeason } from "@/server/seasons"
 import { getFixtures } from "@/server/fixtures"
 import FixturesContent from "./content"
-import { Suspense } from "react"
-import GameweekResultsSkeleton from "@/components/Fixtures/GameweekResultsSkeleton"
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
+import { queryClient } from "@/utils/api/query"
+import { fixturesKey } from "@/hooks/queries/fixtures"
+
 
 export default async function FixturesPage(props: {
   searchParams?: Promise<{ gw?: string, s?: string }>
@@ -21,15 +23,17 @@ export default async function FixturesPage(props: {
     season = latestSeason as Season
   }
 
-  const initialFixtures = await getFixtures(api, { gameweek, season })
+  await queryClient.prefetchQuery({
+    queryKey: fixturesKey({ season, gameweek }),
+    queryFn: () => getFixtures(api, { season, gameweek }),
+  })
 
   return (
-    <Suspense fallback={<GameweekResultsSkeleton />}>
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <FixturesContent
-        initialFixtures={initialFixtures}
         initialGameweek={gameweek}
         initialSeason={season}
       />
-    </Suspense>
+    </HydrationBoundary>
   )
 }

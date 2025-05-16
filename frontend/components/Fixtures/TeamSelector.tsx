@@ -69,14 +69,14 @@ export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProp
               </CommandItem>
               {teams?.map((team) => (
                 <CommandItem
-                  key={team.tricode}
-                  value={team.name}
+                  key={team.id}
+                  value={team.short_name}
                   onSelect={() => {
                     onChange(team)
                     setOpen(false)
                   }}
                 >
-                  {team.name}
+                  {team.short_name}
                   <Check
                     className={cn(
                       "ml-auto",

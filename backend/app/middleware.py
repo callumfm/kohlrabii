@@ -31,6 +31,7 @@ class ProcessTimeMiddleware(BaseHTTPMiddleware):
         process_time = time.perf_counter() - start_time
         process_time_ms = f"{process_time * 1000:.0f}ms"
         response.headers["X-Process-Time"] = process_time_ms
+        logger.info(f"Process Time: {process_time_ms}")
         return response
 
 
