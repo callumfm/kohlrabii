@@ -10,6 +10,7 @@ import { FormattedDate } from "@/components/Fixtures/FormattedDate"
 import Link from "next/link"
 import Image from "next/image"
 import { CONFIG } from "@/utils/config"
+import { dashboardPath } from "@/utils/path"
 
 interface GameweekResultsProps {
   fixtures: schemas["FixtureRead"][]
@@ -61,7 +62,10 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                     >
                       {/* Home Team */}
                       <div className="flex-1 flex justify-end items-center gap-3 min-w-[150px]">
-                        <Link href={`/teams/${fixture.home_team.id}`} className="flex justify-end items-center gap-3 hover:underline">
+                        <Link
+                          href={dashboardPath(`/teams/${fixture.home_team.id}`)}
+                          className="flex justify-end items-center gap-3 hover:underline"
+                        >
                           <span className="font-semibold text-base truncate">{fixture.home_team.short_name}</span>
                           <div className="w-8 h-8 relative flex-shrink-0">
                             <Image
@@ -86,7 +90,10 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
 
                       {/* Away Team */}
                       <div className="flex-1 flex items-center gap-3 min-w-[150px]">
-                        <Link href={`/teams/${fixture.away_team.id}`} className="flex items-center gap-3 hover:underline">
+                        <Link
+                          href={dashboardPath(`/teams/${fixture.away_team.id}`)}
+                          className="flex items-center gap-3 hover:underline"
+                        >
                           <div className="w-8 h-8 relative flex-shrink-0">
                             <Image
                               src={`${CONFIG.SUPABASE_BUCKET_URL}/badges/${fixture.away_team.id}.png`}

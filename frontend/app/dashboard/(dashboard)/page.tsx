@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    router.push(dashboardPath("/fixtures"))
+    router.push("/fixtures")
   }, [router])
 
   return <></>
