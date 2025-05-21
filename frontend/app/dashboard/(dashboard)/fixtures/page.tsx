@@ -1,15 +1,14 @@
-import { getServerSideAPI } from "@/utils/client/serverside"
-import { Season } from "@/client/types"
-import { getLatestSeason } from "@/server/seasons"
-import { getFixtures } from "@/server/fixtures"
-import FixturesContent from "./content"
-import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
-import { queryClient } from "@/utils/api/query"
+import type { Season } from "@/client/types"
 import { fixturesKey } from "@/hooks/queries/fixtures"
+import { getFixtures } from "@/server/fixtures"
+import { getLatestSeason } from "@/server/seasons"
+import { queryClient } from "@/utils/api/query"
+import { getServerSideAPI } from "@/utils/client/serverside"
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
+import ClientPage from "./ClientPage"
 
-
-export default async function FixturesPage(props: {
-  searchParams?: Promise<{ gw?: string, s?: string }>
+export default async function Page(props: {
+  searchParams?: Promise<{ gw?: string; s?: string }>
 }) {
   const api = await getServerSideAPI()
 
@@ -18,7 +17,8 @@ export default async function FixturesPage(props: {
   let season = searchParams?.s as Season | undefined
 
   if (!gameweek || !season) {
-    const { season: latestSeason, gameweek: latestGameweek } = await getLatestSeason(api)
+    const { season: latestSeason, gameweek: latestGameweek } =
+      await getLatestSeason(api)
     gameweek = latestGameweek
     season = latestSeason as Season
   }
@@ -30,10 +30,7 @@ export default async function FixturesPage(props: {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <FixturesContent
-        initialGameweek={gameweek}
-        initialSeason={season}
-      />
+      <ClientPage initialGameweek={gameweek} initialSeason={season} />
     </HydrationBoundary>
   )
 }

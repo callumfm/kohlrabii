@@ -1,15 +1,14 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
+import { ChartCard } from "@/components/Card/ChartCard"
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { ChartCard } from "./ChartCard"
-import { schemas } from "@/utils/api/client"
+import type { schemas } from "@/utils/api/client"
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 const chartConfig = {
   forGoals: {
@@ -28,9 +27,10 @@ interface FixturesChartProps {
 }
 
 export function FixturesChart({ fixtures, team_name }: FixturesChartProps) {
-  const fixtureItems = (fixtures as schemas["FixtureReadPagination"])?.items ?? []
+  const fixtureItems =
+    (fixtures as schemas["FixtureReadPagination"])?.items ?? []
 
-  const chartData = fixtureItems.map(fixture => {
+  const chartData = fixtureItems.map((fixture) => {
     const wasHome = fixture.home_team.name === team_name
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
@@ -59,21 +59,18 @@ export function FixturesChart({ fixtures, team_name }: FixturesChartProps) {
       forecast: fixture.forecast,
       venue: wasHome ? "Home" : "Away",
       outcome: fixture.result
-        ? (goalsFor > goalsAgainst
-            ? "Win"
-            : goalsFor < goalsAgainst
-              ? "Loss"
-              : "Draw")
-        : null
+        ? goalsFor > goalsAgainst
+          ? "Win"
+          : goalsFor < goalsAgainst
+            ? "Loss"
+            : "Draw"
+        : null,
     }
   })
 
   return (
     <ChartCard title="Upcoming Fixtures" description="Next 10 games">
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-[5/1] w-full"
-      >
+      <ChartContainer config={chartConfig} className="aspect-[5/1] w-full">
         <BarChart accessibilityLayer data={chartData}>
           <CartesianGrid vertical={false} />
           <XAxis
@@ -87,7 +84,11 @@ export function FixturesChart({ fixtures, team_name }: FixturesChartProps) {
             content={<ChartTooltipContent indicator="dashed" />}
           />
           <Bar dataKey="goalsFor" fill="var(--color-forGoals)" radius={4} />
-          <Bar dataKey="goalsAgainst" fill="var(--color-againstGoals)" radius={4} />
+          <Bar
+            dataKey="goalsAgainst"
+            fill="var(--color-againstGoals)"
+            radius={4}
+          />
         </BarChart>
       </ChartContainer>
     </ChartCard>

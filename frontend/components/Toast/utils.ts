@@ -1,15 +1,15 @@
 const toastKeyMap: { [key: string]: string[] } = {
-  status: ['status', 'status_description'],
-  error: ['error', 'error_description'],
+  status: ["status", "status_description"],
+  error: ["error", "error_description"],
 }
 
 const getToastRedirect = (
   path: string,
   toastType: string,
   toastName: string,
-  toastDescription: string = '',
-  disableButton: boolean = false,
-  arbitraryParams: string = '',
+  toastDescription = "",
+  disableButton = false,
+  arbitraryParams = "",
 ): string => {
   const [nameKey, descriptionKey] = toastKeyMap[toastType]
 
@@ -20,7 +20,7 @@ const getToastRedirect = (
   }
 
   if (disableButton) {
-    redirectPath += `&disable_button=true`
+    redirectPath += "&disable_button=true"
   }
 
   if (arbitraryParams) {
@@ -33,13 +33,13 @@ const getToastRedirect = (
 export const getStatusRedirect = (
   path: string,
   statusName: string,
-  statusDescription: string = '',
-  disableButton: boolean = false,
-  arbitraryParams: string = '',
+  statusDescription = "",
+  disableButton = false,
+  arbitraryParams = "",
 ) =>
   getToastRedirect(
     path,
-    'status',
+    "status",
     statusName,
     statusDescription,
     disableButton,
@@ -49,13 +49,13 @@ export const getStatusRedirect = (
 export const getErrorRedirect = (
   path: string,
   errorName: string,
-  errorDescription: string = '',
-  disableButton: boolean = false,
-  arbitraryParams: string = '',
+  errorDescription = "",
+  disableButton = false,
+  arbitraryParams = "",
 ) =>
   getToastRedirect(
     path,
-    'error',
+    "error",
     errorName,
     errorDescription,
     disableButton,

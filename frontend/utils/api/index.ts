@@ -1,5 +1,5 @@
 export const getServerURL = (path?: string): string => {
-  path = path || ""
+  const stringPath = path || ""
   const baseURL = process.env.SERVER_API_URL
-  return `${baseURL}${path}`
+  return `${baseURL}${stringPath}`
 }

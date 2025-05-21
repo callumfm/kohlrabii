@@ -1,17 +1,16 @@
-import { api } from '@/utils/client'
-import { operations, unwrap } from '@/utils/api/client'
-import { useQuery } from '@tanstack/react-query'
+import { type operations, unwrap } from "@/utils/api/client"
+import { api } from "@/utils/client"
+import { useQuery } from "@tanstack/react-query"
 
-type TParams = operations['fixtures_get_fixtures_query']['parameters']['query']
+type TParams = operations["fixtures_get_fixtures_query"]["parameters"]["query"]
 
 export const fixturesKey = (parameters?: TParams) =>
   // TODO: Unpack in same order
-  // ["fixtures", parameters] as const
-  ["fixtures", parameters?.season, parameters?.gameweek, parameters?.team_id] as const
+  ["fixtures", parameters] as const
 
 export const fetchFixtures = async (parameters: TParams) =>
   unwrap(
-    api.GET('/api/v1/fixtures', {
+    api.GET("/api/v1/fixtures", {
       params: {
         query: {
           ...(parameters || {}),

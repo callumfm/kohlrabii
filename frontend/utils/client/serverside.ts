@@ -1,7 +1,7 @@
-import { Client } from '@/utils/api/client'
-import { cookies, headers } from 'next/headers'
-import { cache } from 'react'
-import { createServerSideAPI } from '.'
+import type { Client } from "@/utils/api/client"
+import { cookies, headers } from "next/headers"
+import { cache } from "react"
+import { createServerSideAPI } from "."
 
 const _getServerSideAPI = async (token?: string): Promise<Client> => {
   const headers_ = await headers()

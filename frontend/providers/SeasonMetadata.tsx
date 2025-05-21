@@ -1,7 +1,7 @@
 "use client"
 
-import { createContext, useContext, ReactNode } from "react"
-import { Season } from "@/client/types"
+import type { Season } from "@/client/types"
+import { type ReactNode, createContext, useContext } from "react"
 
 type SeasonContextType = {
   latestSeason: Season
@@ -28,6 +28,9 @@ export function SeasonContextProvider({
 
 export function useSeasonMetadata() {
   const ctx = useContext(SeasonContext)
-  if (!ctx) throw new Error("useSeasonMetadata must be used inside SeasonContextProvider")
+  if (!ctx)
+    throw new Error(
+      "useSeasonMetadata must be used inside SeasonContextProvider",
+    )
   return ctx
 }

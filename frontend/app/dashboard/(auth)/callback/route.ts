@@ -1,6 +1,6 @@
+import { CONFIG } from "@/utils/config"
 import { createClient } from "@/utils/supabase/server"
 import { NextResponse } from "next/server"
-import { CONFIG } from "@/utils/config"
 
 export async function GET(request: Request) {
   // The `/callback` route is required for the server-side auth flow implemented

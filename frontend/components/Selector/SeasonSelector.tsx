@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
+import * as React from "react"
 
-import { cn } from "@/utils/merge"
+import type { Season } from "@/client/types"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Season } from "@/client/types"
+import { cn } from "@/utils/merge"
 
 const formatSeasonLabel = (season: string): string => {
   return `20${season.substring(0, 2)}/${season.substring(2, 4)}`
@@ -41,7 +41,10 @@ type SeasonSelectorProps = {
   onChange: (value: Season) => void
 }
 
-export function SeasonSelector({ currentSeason, onChange }: SeasonSelectorProps) {
+export function SeasonSelector({
+  currentSeason,
+  onChange,
+}: SeasonSelectorProps) {
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -49,11 +52,12 @@ export function SeasonSelector({ currentSeason, onChange }: SeasonSelectorProps)
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           className="w-[150px] justify-between"
         >
-          {currentSeason ? formatSeasonLabel(currentSeason) : "Select season..."}
+          {currentSeason
+            ? formatSeasonLabel(currentSeason)
+            : "Select season..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -76,7 +80,9 @@ export function SeasonSelector({ currentSeason, onChange }: SeasonSelectorProps)
                   <Check
                     className={cn(
                       "ml-auto",
-                      currentSeason === seasonValue ? "opacity-100" : "opacity-0"
+                      currentSeason === seasonValue
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
                 </CommandItem>

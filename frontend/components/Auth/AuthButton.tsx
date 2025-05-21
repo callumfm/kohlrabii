@@ -1,7 +1,7 @@
-import Link from "next/link"
-import { Button } from "../ui/button"
 import { CONFIG } from "@/utils/config"
 import { createClient } from "@/utils/supabase/server"
+import Link from "next/link"
+import { Button } from "../ui/button"
 
 export default async function AuthButton() {
   const supabase = await createClient()
@@ -13,17 +13,13 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       <Button asChild size="sm" variant={"outline"}>
-        <Link href={CONFIG.DASHBOARD_URL}>
-          Dashboard
-        </Link>
+        <Link href={CONFIG.DASHBOARD_URL}>Dashboard</Link>
       </Button>
     </div>
   ) : (
     <div className="flex gap-2">
       <Button asChild size="sm" variant={"outline"}>
-        <Link href={`${CONFIG.DASHBOARD_URL}/sign-in`}>
-          Sign in
-        </Link>
+        <Link href={`${CONFIG.DASHBOARD_URL}/sign-in`}>Sign in</Link>
       </Button>
       {/* <Button asChild size="sm" variant={"default"}>
         <Link href={`${CONFIG.DASHBOARD_URL}/sign-up`}>Sign up</Link>

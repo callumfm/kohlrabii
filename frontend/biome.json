@@ -10,7 +10,8 @@
       "openapi.json",
       "client/index.ts",
       "playwright.config.ts",
-      "playwright-report"
+      "playwright-report",
+      "components/ui/*"
     ]
   },
   "linter": {
@@ -23,6 +24,12 @@
       },
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
       }
     }
   },

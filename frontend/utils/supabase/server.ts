@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
-import { CONFIG } from "@/utils/config"
 
 export const createClient = async () => {
   const cookieStore = await cookies()
@@ -9,21 +8,15 @@ export const createClient = async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      // cookieOptions: {
-      //   domain: `.${CONFIG.WEB_DOMAIN}`,
-      //   sameSite: 'lax' as const,
-      //   secure: CONFIG.WEB_DOMAIN.startsWith("https") ? true : false,
-      //   httpOnly: true,
-      // },
       cookies: {
         getAll() {
           return cookieStore.getAll()
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => {
+            for (const { name, value, options } of cookiesToSet) {
               cookieStore.set(name, value, options)
-            })
+            }
           } catch (error) {
             // The `set` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

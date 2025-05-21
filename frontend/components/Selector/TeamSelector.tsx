@@ -1,9 +1,9 @@
 "use client"
 
-import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
+import * as React from "react"
 
-import { cn } from "@/utils/merge"
+import type { Season, Team } from "@/client/types"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -18,8 +18,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Season, Team } from "@/client/types"
 import { useTeams } from "@/hooks/queries/teams"
+import { cn } from "@/utils/merge"
 
 type TeamSelectorProps = {
   currentTeam: Team | null
@@ -27,7 +27,11 @@ type TeamSelectorProps = {
   season: Season
 }
 
-export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProps) {
+export function TeamSelector({
+  currentTeam,
+  onChange,
+  season,
+}: TeamSelectorProps) {
   const [open, setOpen] = React.useState(false)
   const displayText = currentTeam ? currentTeam.tricode : "Filter team"
   const { data: teams } = useTeams({ season })
@@ -37,7 +41,6 @@ export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProp
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
           aria-expanded={open}
           className="w-[150px] justify-between"
         >
@@ -63,7 +66,9 @@ export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProp
                 <Check
                   className={cn(
                     "ml-auto",
-                    currentTeam?.tricode === "all" ? "opacity-100" : "opacity-0"
+                    currentTeam?.tricode === "all"
+                      ? "opacity-100"
+                      : "opacity-0",
                   )}
                 />
               </CommandItem>
@@ -80,7 +85,7 @@ export function TeamSelector({ currentTeam, onChange, season }: TeamSelectorProp
                   <Check
                     className={cn(
                       "ml-auto",
-                      currentTeam === team ? "opacity-100" : "opacity-0"
+                      currentTeam === team ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

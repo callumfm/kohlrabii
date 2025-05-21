@@ -1,7 +1,7 @@
+import { CONFIG } from "@/utils/config"
 import { Analytics } from "@vercel/analytics/react"
 import { Geist } from "next/font/google"
 import localFont from "next/font/local"
-import { CONFIG } from "@/utils/config"
 import "./globals.css"
 
 export const metadata = {

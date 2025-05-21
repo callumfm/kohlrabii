@@ -1,9 +1,9 @@
 "use client"
 
-import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import React from "react"
 
 interface GameweekSelectorProps {
   currentGameweek: number
@@ -20,8 +20,10 @@ export function GameweekSelector({
   minGameweek = 1,
   maxGameweek = 38,
 }: GameweekSelectorProps) {
-  const previousGameweek = currentGameweek > minGameweek ? currentGameweek - 1 : null
-  const nextGameweek = currentGameweek < maxGameweek ? currentGameweek + 1 : null
+  const previousGameweek =
+    currentGameweek > minGameweek ? currentGameweek - 1 : null
+  const nextGameweek =
+    currentGameweek < maxGameweek ? currentGameweek + 1 : null
 
   return (
     <div className="flex items-center justify-center gap-1">
@@ -55,5 +57,3 @@ export function GameweekSelector({
     </div>
   )
 }
-
-export default GameweekSelector

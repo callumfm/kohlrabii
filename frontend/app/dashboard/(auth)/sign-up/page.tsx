@@ -1,15 +1,9 @@
-import { signUpAction } from "@/server/auth"
-import { FormMessage, type Message } from "@/components/Form/FormMessage"
 import { SubmitButton } from "@/components/Button/SubmitButton"
+import { FormMessage, type Message } from "@/components/Form/FormMessage"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-
+import { signUpAction } from "@/server/auth"
 
 export default async function Signup(props: {
   searchParams: Promise<Message>
@@ -44,7 +38,10 @@ export default async function Signup(props: {
                 minLength={6}
                 required
               />
-              <SubmitButton pendingText="Signing up..." formAction={signUpAction}>
+              <SubmitButton
+                pendingText="Signing up..."
+                formAction={signUpAction}
+              >
                 Sign up
               </SubmitButton>
               <FormMessage message={searchParams} />

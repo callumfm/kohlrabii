@@ -1,14 +1,10 @@
 "use client"
 
-import * as React from "react"
-import {
-  ArrowUpCircleIcon,
-  Calendar1Icon,
-  UsersRoundIcon,
-} from "lucide-react"
+import { ArrowUpCircleIcon, Calendar1Icon, UsersRoundIcon } from "lucide-react"
+import type * as React from "react"
 
 import { NavMain } from "@/components/Sidebar/NavMain"
-import { NavUser, TUser } from "@/components/Sidebar/NavUser"
+import { NavUser, type TUser } from "@/components/Sidebar/NavUser"
 import {
   Sidebar,
   SidebarContent,

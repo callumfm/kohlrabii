@@ -1,7 +1,7 @@
-import { updateSession } from "@/utils/supabase/middleware"
-import { NextRequest, NextResponse } from "next/server"
 import { CONFIG } from "@/utils/config"
-import { UserResponse } from "@supabase/auth-js"
+import { updateSession } from "@/utils/supabase/middleware"
+import type { UserResponse } from "@supabase/auth-js"
+import { type NextRequest, NextResponse } from "next/server"
 
 export async function middleware(request: NextRequest) {
   const { user, response } = await updateSession(request)
@@ -72,7 +72,7 @@ function handleAuthRedirects(user: UserResponse, path: string) {
 
 function rewritePath(prefix: string, path: string, requestUrl: string) {
   return NextResponse.rewrite(
-    new URL(`${prefix}${path === "/" ? "" : path}`, requestUrl)
+    new URL(`${prefix}${path === "/" ? "" : path}`, requestUrl),
   )
 }
 

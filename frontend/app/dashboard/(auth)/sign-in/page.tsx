@@ -1,14 +1,9 @@
-import { signInAction } from "@/server/auth"
-import { FormMessage, type Message } from "@/components/Form/FormMessage"
 import { SubmitButton } from "@/components/Button/SubmitButton"
+import { FormMessage, type Message } from "@/components/Form/FormMessage"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { signInAction } from "@/server/auth"
 import Link from "next/link"
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
@@ -39,7 +34,10 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 placeholder="Your password"
                 required
               />
-              <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+              <SubmitButton
+                pendingText="Signing In..."
+                formAction={signInAction}
+              >
                 Sign in
               </SubmitButton>
               <FormMessage message={searchParams} />

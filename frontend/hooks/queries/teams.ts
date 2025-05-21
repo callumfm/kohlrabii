@@ -1,15 +1,15 @@
-import { api } from '@/utils/client'
-import { operations, unwrap, schemas } from '@/utils/api/client'
-import { useQuery } from '@tanstack/react-query'
+import { type operations, type schemas, unwrap } from "@/utils/api/client"
+import { api } from "@/utils/client"
+import { useQuery } from "@tanstack/react-query"
 
 export const useTeams = (
-  parameters: operations['teams_get_teams_for_season']['parameters']['query'],
+  parameters: operations["teams_get_teams_for_season"]["parameters"]["query"],
 ) =>
   useQuery({
-    queryKey: ['teams', parameters],
+    queryKey: ["teams", parameters],
     queryFn: async () =>
       unwrap(
-        api.GET('/api/v1/teams', {
+        api.GET("/api/v1/teams", {
           params: {
             query: {
               season: parameters.season,
@@ -19,16 +19,15 @@ export const useTeams = (
       ),
   })
 
-
 export const useTeam = (
-  parameters: operations['teams_get_team_by_id']['parameters']['path'],
-  initialData?: schemas['TeamRead']
+  parameters: operations["teams_get_team_by_id"]["parameters"]["path"],
+  initialData?: schemas["TeamRead"],
 ) =>
   useQuery({
-    queryKey: ['teams', parameters],
+    queryKey: ["teams", parameters],
     queryFn: async () =>
       unwrap(
-        api.GET('/api/v1/teams/{team_id}', {
+        api.GET("/api/v1/teams/{team_id}", {
           params: {
             path: {
               team_id: parameters.team_id,
@@ -36,5 +35,5 @@ export const useTeam = (
           },
         }),
       ),
-    initialData: initialData
+    initialData: initialData,
   })

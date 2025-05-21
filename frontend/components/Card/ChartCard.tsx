@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/card"
 
 interface ChartCardProps {
-  children: React.ReactNode;
-  title: string;
-  description: string;
+  children: React.ReactNode
+  title: string
+  description: string
 }
 
 export function ChartCard({ children, title, description }: ChartCardProps) {
@@ -21,9 +21,7 @@ export function ChartCard({ children, title, description }: ChartCardProps) {
         <CardTitle className="text-xl">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        {children}
-      </CardContent>
+      <CardContent>{children}</CardContent>
     </Card>
   )
 }

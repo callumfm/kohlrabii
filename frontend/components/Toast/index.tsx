@@ -1,7 +1,7 @@
-import { XMarkIcon } from '@heroicons/react/24/outline'
-import * as ToastPrimitives from '@radix-ui/react-toast'
-import { VariantProps, cva } from 'class-variance-authority'
-import * as React from 'react'
+import { XMarkIcon } from "@heroicons/react/24/outline"
+import * as ToastPrimitives from "@radix-ui/react-toast"
+import { type VariantProps, cva } from "class-variance-authority"
+import * as React from "react"
 
 const ToastProvider = ToastPrimitives.Provider
 
@@ -18,18 +18,18 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  'data-[swipe=move]:transition-none group relative pointer-events-auto flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl p-4 pl-5 pr-8 shadow-xl transition-all data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
+  "data-[swipe=move]:transition-none group relative pointer-events-auto flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl p-4 pl-5 pr-8 shadow-xl transition-all data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full",
   {
     variants: {
       variant: {
         default:
-          'bg-white dark:bg-gray-900 border border-transparent dark:border-polar-700',
-        error: 'group error bg-red-50 text-red-600',
-        success: 'group success bg-green-50 text-green-600',
+          "bg-white dark:bg-gray-900 border border-transparent dark:border-polar-700",
+        error: "group error bg-red-50 text-red-600",
+        success: "group success bg-green-50 text-green-600",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
   },
 )

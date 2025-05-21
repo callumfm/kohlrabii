@@ -1,9 +1,8 @@
+import { CONFIG } from "@/utils/config"
 import { createServerClient } from "@supabase/ssr"
 import { type NextRequest, NextResponse } from "next/server"
-import { CONFIG } from "@/utils/config"
 
 export const updateSession = async (req: NextRequest) => {
-
   let response = NextResponse.next({
     request: {
       headers: req.headers,
@@ -16,8 +15,8 @@ export const updateSession = async (req: NextRequest) => {
     {
       cookieOptions: {
         domain: `.${CONFIG.WEB_DOMAIN}`,
-        sameSite: 'lax' as const,
-        secure: CONFIG.WEB_DOMAIN.startsWith("https") ? true : false,
+        sameSite: "lax" as const,
+        secure: !!CONFIG.WEB_DOMAIN.startsWith("https"),
         httpOnly: true,
       },
       cookies: {
@@ -43,5 +42,5 @@ export const updateSession = async (req: NextRequest) => {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const user = await supabase.auth.getUser()
 
-  return {user, response }
+  return { user, response }
 }

@@ -2,22 +2,23 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import type { ReactNode } from "react"
 import { useDebouncedCallback } from "use-debounce"
-import { dashboardPath } from "@/utils/path"
-import { ReactNode } from "react"
 
 interface TeamLinkProps {
-  teamId: number
+  href: string
   className?: string
   children: ReactNode
 }
 
-export function TeamLink({ teamId, className, children }: TeamLinkProps) {
+export function PrefetchOnHoverLink({
+  href,
+  className,
+  children,
+}: TeamLinkProps) {
   const router = useRouter()
-  const href = dashboardPath(`/teams/${teamId}`)
-
   const handleMouseEnter = useDebouncedCallback(() => {
-    router.prefetch(href);
+    router.prefetch(href)
   }, 300)
 
   return (

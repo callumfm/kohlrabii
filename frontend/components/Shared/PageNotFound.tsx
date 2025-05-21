@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
 import { Button } from "@/components/ui/button"
-import Link from 'next/link'
+import Link from "next/link"
 
 const PageNotFound = () => {
   return (
@@ -10,7 +10,7 @@ const PageNotFound = () => {
       <h1 className="max-w-xl text-center text-4xl leading-normal">
         We couldn&apos;t find the page you were looking for
       </h1>
-      <Link href={`/`}>
+      <Link href={"/"}>
         <Button>Take me home</Button>
       </Link>
     </div>

@@ -1,26 +1,34 @@
 "use client"
 
-import { type FC, useState, Suspense, useMemo } from "react"
-import { useFixtures, fixturesKey, fetchFixtures } from "@/hooks/queries/fixtures"
-import { ClientResponseError, schemas } from "@/utils/api/client"
-import GameweekResults from "@/components/Fixtures/GameweekResults"
-import GameweekSelector from "@/components/Fixtures/GameweekSelector"
-import GameweekResultsSkeleton from "@/components/Fixtures/GameweekResultsSkeleton"
-import { SeasonSelector } from "@/components/Fixtures/SeasonSelector"
-import { useDebouncedCallback } from "use-debounce"
-import { usePathname, useRouter, notFound } from "next/navigation"
-import { Season, Team } from "@/client/types"
-import { TeamSelector } from "@/components/Fixtures/TeamSelector"
+import type { Season, Team } from "@/client/types"
+import { GameweekSelector } from "@/components/Selector/GameweekSelector"
+import { SeasonSelector } from "@/components/Selector/SeasonSelector"
+import { TeamSelector } from "@/components/Selector/TeamSelector"
+import {
+  fetchFixtures,
+  fixturesKey,
+  useFixtures,
+} from "@/hooks/queries/fixtures"
 import { useSeasonMetadata } from "@/providers/SeasonMetadata"
+import { ClientResponseError, type schemas } from "@/utils/api/client"
 import { queryClient } from "@/utils/api/query"
+import { notFound, usePathname } from "next/navigation"
+import { type FC, Suspense, useMemo, useState } from "react"
+import { useDebouncedCallback } from "use-debounce"
+import { GameweekResults } from "./components/GameweekResults"
+import { GameweekResultsSkeleton } from "./components/GameweekResultsSkeleton"
 
-type TResultsProps = {
+type TFilteredFixturesProps = {
   gameweek: number
   season: Season
   team_id?: number | null
 }
 
-const ResultsContent = ({ gameweek, season, team_id }: TResultsProps) => {
+const getFilteredFixtures = ({
+  gameweek,
+  season,
+  team_id,
+}: TFilteredFixturesProps) => {
   const { data, error } = useFixtures(
     { season: season, gameweek: gameweek },
     { suspense: true },
@@ -37,27 +45,35 @@ const ResultsContent = ({ gameweek, season, team_id }: TResultsProps) => {
 
   const filteredFixtures = useMemo(() => {
     if (!team_id) return fixturesData
-    return fixturesData.filter(fixture =>
-      fixture.home_team.id === team_id || fixture.away_team.id === team_id
+    return fixturesData.filter(
+      (fixture) =>
+        fixture.home_team.id === team_id || fixture.away_team.id === team_id,
     )
   }, [fixturesData, team_id])
 
-  return <GameweekResults fixtures={filteredFixtures} />
+  return filteredFixtures
 }
 
-type TFixturesProps = {
+type TClientPageProps = {
   initialGameweek?: number
   initialSeason?: Season
 }
 
-const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason }) => {
+const ClientPage: FC<TClientPageProps> = ({
+  initialGameweek,
+  initialSeason,
+}) => {
   const pathname = usePathname()
-  const { replace } = useRouter()
   const { latestSeason, latestGameweek } = useSeasonMetadata()
 
-  const [selectedGameweek, setSelectedGameweek] = useState<number>(initialGameweek || latestGameweek)
-  const [currentGameweek, setCurrentGameweek] = useState<number>(selectedGameweek)
-  const [currentSeason, setCurrentSeason] = useState<Season>(initialSeason || latestSeason)
+  const [selectedGameweek, setSelectedGameweek] = useState<number>(
+    initialGameweek || latestGameweek,
+  )
+  const [currentGameweek, setCurrentGameweek] =
+    useState<number>(selectedGameweek)
+  const [currentSeason, setCurrentSeason] = useState<Season>(
+    initialSeason || latestSeason,
+  )
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null)
 
   const updateURL = useDebouncedCallback((gw: number, season: Season) => {
@@ -66,13 +82,14 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason })
     params.set("gw", gw.toString())
     params.set("s", season)
     // 'replace' causes a server refresh with duplicate request
-    window.history.pushState({}, '', `${pathname}?${params.toString()}`)
+    window.history.pushState({}, "", `${pathname}?${params.toString()}`)
   }, 300)
 
   const handleGameweekHover = (next_gw: number) => {
     queryClient.prefetchQuery({
       queryKey: fixturesKey({ season: currentSeason, gameweek: next_gw }),
-      queryFn: () => fetchFixtures({ season: currentSeason, gameweek: next_gw }),
+      queryFn: () =>
+        fetchFixtures({ season: currentSeason, gameweek: next_gw }),
     })
   }
 
@@ -106,14 +123,16 @@ const FixturesContent: FC<TFixturesProps> = ({ initialGameweek, initialSeason })
       </div>
 
       <Suspense fallback={<GameweekResultsSkeleton />}>
-        <ResultsContent
-          gameweek={currentGameweek}
-          season={currentSeason}
-          team_id={currentTeam?.id}
+        <GameweekResults
+          fixtures={getFilteredFixtures({
+            gameweek: currentGameweek,
+            season: currentSeason,
+            team_id: currentTeam?.id,
+          })}
         />
       </Suspense>
     </div>
   )
 }
 
-export default FixturesContent
+export default ClientPage

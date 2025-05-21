@@ -1,4 +1,4 @@
-import { operations, components } from "./index"
+import type { components, operations } from "./index"
 
 export type Season = NonNullable<
   NonNullable<

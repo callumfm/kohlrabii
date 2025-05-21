@@ -1,12 +1,12 @@
-import { KolQueryClientProvider } from "@/providers/QueryClient"
+import type { Season } from "@/client/types"
 import { AppSidebar } from "@/components/Sidebar/DashboardSidebar"
 import { SiteHeader } from "@/components/Sidebar/SiteHeader"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { ThemeProvider } from "next-themes"
+import { KolQueryClientProvider } from "@/providers/QueryClient"
+import { SeasonContextProvider } from "@/providers/SeasonMetadata"
 import { getLatestSeason } from "@/server/seasons"
 import { getServerSideAPI } from "@/utils/client/serverside"
-import { SeasonContextProvider } from "@/providers/SeasonMetadata"
-import { Season } from "@/client/types"
+import { ThemeProvider } from "next-themes"
 
 export default async function DashboardLayout({
   children,
@@ -14,7 +14,8 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }>) {
   const api = await getServerSideAPI()
-  const { season: latestSeason, gameweek: latestGameweek } = await getLatestSeason(api)
+  const { season: latestSeason, gameweek: latestGameweek } =
+    await getLatestSeason(api)
 
   return (
     <KolQueryClientProvider>

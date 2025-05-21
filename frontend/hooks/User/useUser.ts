@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { User } from "@supabase/supabase-js"
 import { createClient } from "@/utils/supabase/client"
+import type { User } from "@supabase/supabase-js"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export function useUser() {
   const [user, setUser] = useState<User | null>(null)
@@ -12,16 +12,16 @@ export function useUser() {
   const supabase = createClient()
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session) {
-          setUser(session.user)
-        } else {
-          setUser(null)
-        }
-        setLoading(false)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user)
+      } else {
+        setUser(null)
       }
-    )
+      setLoading(false)
+    })
 
     // Initial fetch of user data
     async function getInitialUser() {

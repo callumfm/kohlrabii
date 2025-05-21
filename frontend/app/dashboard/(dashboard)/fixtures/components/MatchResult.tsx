@@ -1,70 +1,65 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/utils/merge";
+import { Badge } from "@/components/ui/badge"
+import { cn } from "@/utils/merge"
+import React from "react"
 
-// Define the type for a match fixture
 interface Fixture {
-  date: string;
-  gameweek: number;
-  home_team: string;
-  away_team: string;
-  season: string;
+  date: string
+  gameweek: number
+  home_team: string
+  away_team: string
+  season: string
 }
 
-// Define the type for the match prediction
 interface MatchData {
-  home_win: number;
-  away_win: number;
-  home_clean_sheet: number;
-  away_clean_sheet: number;
-  home_goals_for: number;
-  away_goals_for: number;
-  fixture: Fixture;
+  home_win: number
+  away_win: number
+  home_clean_sheet: number
+  away_clean_sheet: number
+  home_goals_for: number
+  away_goals_for: number
+  fixture: Fixture
 }
 
 interface MatchResultProps {
-  match: MatchData;
-  className?: string;
+  match: MatchData
+  className?: string
 }
 
 export function MatchResult({ match, className }: MatchResultProps) {
-  // Format the date nicely
-  const matchDate = new Date(match.fixture.date);
+  const matchDate = new Date(match.fixture.date)
   const formattedDate = matchDate.toLocaleDateString("en-GB", {
     weekday: "short",
     day: "numeric",
     month: "short",
     year: "numeric",
-  });
+  })
 
-  // Determine the favorite team based on win probability
-  const isFavorite = match.home_win > match.away_win ? "home" : "away";
-  const drawProbability = 1 - match.home_win - match.away_win;
+  const isFavorite = match.home_win > match.away_win ? "home" : "away"
+  const drawProbability = 1 - match.home_win - match.away_win
 
-  // Determine the most likely scoreline (simplified)
-  const predictedHomeGoals = Math.round(match.home_goals_for);
-  const predictedAwayGoals = Math.round(match.away_goals_for);
+  const predictedHomeGoals = Math.round(match.home_goals_for)
+  const predictedAwayGoals = Math.round(match.away_goals_for)
 
-  // Calculate percentages for the win probability bar
-  const homeWinPercent = Math.round(match.home_win * 100);
-  const drawPercent = Math.round(drawProbability * 100);
-  const awayWinPercent = Math.round(match.away_win * 100);
+  const homeWinPercent = Math.round(match.home_win * 100)
+  const drawPercent = Math.round(drawProbability * 100)
+  const awayWinPercent = Math.round(match.away_win * 100)
 
-  // Calculate clean sheet percentages
-  const homeCleanSheetPercent = Math.round(match.home_clean_sheet * 100);
-  const awayCleanSheetPercent = Math.round(match.away_clean_sheet * 100);
+  const homeCleanSheetPercent = Math.round(match.home_clean_sheet * 100)
+  const awayCleanSheetPercent = Math.round(match.away_clean_sheet * 100)
 
   return (
     <div
       className={cn(
         "rounded-lg border border-border p-4 shadow-sm hover:shadow-md transition-all",
-        className
+        className,
       )}
     >
       <div className="flex flex-col gap-4">
         {/* Header with stacked gameweek and date */}
         <div className="flex flex-col items-center text-sm text-muted-foreground gap-2">
-          <Badge variant="secondary" className="self-center text-md">GW {match.fixture.gameweek}</Badge>
+          <Badge variant="secondary" className="self-center text-md">
+            GW {match.fixture.gameweek}
+          </Badge>
           <span>{formattedDate}</span>
         </div>
 
@@ -75,7 +70,7 @@ export function MatchResult({ match, className }: MatchResultProps) {
             <div
               className={cn(
                 "font-bold text-xl",
-                isFavorite === "home" && "text-primary"
+                isFavorite === "home" && "text-primary",
               )}
             >
               {match.fixture.home_team}
@@ -94,7 +89,7 @@ export function MatchResult({ match, className }: MatchResultProps) {
             <div
               className={cn(
                 "font-bold text-xl",
-                isFavorite === "away" && "text-primary"
+                isFavorite === "away" && "text-primary",
               )}
             >
               {match.fixture.away_team}
@@ -110,7 +105,7 @@ export function MatchResult({ match, className }: MatchResultProps) {
               <div
                 className="bg-green-500 h-2.5 rounded-full"
                 style={{ width: `${homeCleanSheetPercent}%` }}
-              ></div>
+              />
             </div>
             <div className="text-xs mt-1 text-muted-foreground">
               {homeCleanSheetPercent}% clean sheet chance
@@ -123,7 +118,7 @@ export function MatchResult({ match, className }: MatchResultProps) {
               <div
                 className="bg-blue-500 h-2.5 rounded-full"
                 style={{ width: `${awayCleanSheetPercent}%` }}
-              ></div>
+              />
             </div>
             <div className="text-xs mt-1 text-muted-foreground">
               {awayCleanSheetPercent}% clean sheet chance
@@ -168,5 +163,5 @@ export function MatchResult({ match, className }: MatchResultProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

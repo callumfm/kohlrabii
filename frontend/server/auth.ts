@@ -1,10 +1,10 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
+import { CONFIG } from "@/utils/config"
 import { encodedRedirect } from "@/utils/redirect"
+import { createClient } from "@/utils/supabase/server"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { CONFIG } from "@/utils/config"
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString()
@@ -105,11 +105,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   }
 
   if (password !== confirmPassword) {
-    encodedRedirect(
-      "error",
-      "/reset-password",
-      "Passwords do not match",
-    )
+    encodedRedirect("error", "/reset-password", "Passwords do not match")
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -117,11 +113,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   })
 
   if (error) {
-    encodedRedirect(
-      "error",
-      "/reset-password",
-      "Password update failed",
-    )
+    encodedRedirect("error", "/reset-password", "Password update failed")
   }
 
   encodedRedirect("success", "/reset-password", "Password updated")

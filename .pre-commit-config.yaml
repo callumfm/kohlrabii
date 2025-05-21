@@ -16,6 +16,13 @@ repos:
         args:
           - --fix
       - id: ruff-format
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome
+        entry: bash -c 'cd frontend && pnpm run lint'
+        language: system
+        pass_filenames: false
 
 ci:
   autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks

@@ -1,16 +1,15 @@
 "use client"
 
-import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import React from "react"
-
+import { ChartCard } from "@/components/Card/ChartCard"
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart"
-import { ChartCard } from "./ChartCard"
-import { schemas } from "@/utils/api/client"
+import type { schemas } from "@/utils/api/client"
 import { CONFIG } from "@/utils/config"
+import React from "react"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 
 const chartConfig = {
   forGoals: {
@@ -23,27 +22,35 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-
-const toolTip = ({ active, payload }: { active: boolean | undefined, payload: any }) => {
+const toolTip = ({
+  active,
+  payload,
+}: { active: boolean | undefined; payload: any }) => {
   if (!active || !payload?.length) return null
   const data = payload[0].payload
   return (
     <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl">
-      <div className="text-muted-foreground">
-        GW{data.gameweek}
-      </div>
+      <div className="text-muted-foreground">GW{data.gameweek}</div>
       <div className="flex items-center justify-between pt-1">
-        <span className={`w-12 text-right ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}>
+        <span
+          className={`w-12 text-right ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}
+        >
           {data.home_team.tricode}
         </span>
-        <span className={`w-4 text-center ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}>
+        <span
+          className={`w-4 text-center ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}
+        >
           {data.result?.home_score}
         </span>
         <span className="text-muted-foreground">v</span>
-        <span className={`w-4 text-center ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}>
+        <span
+          className={`w-4 text-center ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}
+        >
           {data.result?.away_score}
         </span>
-        <span className={`w-12 text-left ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}>
+        <span
+          className={`w-12 text-left ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}
+        >
           {data.away_team.tricode}
         </span>
       </div>
@@ -57,10 +64,13 @@ interface ResultsChartProps {
 }
 
 export function ResultsChart({ results, team_name }: ResultsChartProps) {
-  const [hoveredGameweek, setHoveredGameweek] = React.useState<number | null>(null)
-  const fixtureItems = (results as schemas["FixtureReadPagination"])?.items ?? []
+  const [hoveredGameweek, setHoveredGameweek] = React.useState<number | null>(
+    null,
+  )
+  const fixtureItems =
+    (results as schemas["FixtureReadPagination"])?.items ?? []
 
-  const chartData = fixtureItems.map(fixture => {
+  const chartData = fixtureItems.map((fixture) => {
     const wasHome = fixture.home_team.name === team_name
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
@@ -91,21 +101,22 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
       home_team: fixture.home_team,
       away_team: fixture.away_team,
       winner: fixture.result
-        ? (goalsFor > goalsAgainst
-            ? (wasHome ? "H" : "A")
-            : goalsFor < goalsAgainst
-              ? (wasHome ? "A" : "H")
-              : null)
-        : null
+        ? goalsFor > goalsAgainst
+          ? wasHome
+            ? "H"
+            : "A"
+          : goalsFor < goalsAgainst
+            ? wasHome
+              ? "A"
+              : "H"
+            : null
+        : null,
     }
   })
 
   return (
     <ChartCard title="Recent Form" description="Last 10 games">
-      <ChartContainer
-        config={chartConfig}
-        className="aspect-[4/1] w-full"
-      >
+      <ChartContainer config={chartConfig} className="aspect-[4/1] w-full">
         <LineChart
           accessibilityLayer
           data={chartData}
@@ -116,7 +127,7 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
           }}
           onMouseMove={(e) => {
             if (e?.activePayload?.[0]) {
-              setHoveredGameweek(e.activePayload[0].payload.gameweek);
+              setHoveredGameweek(e.activePayload[0].payload.gameweek)
             }
           }}
           onMouseLeave={() => setHoveredGameweek(null)}
@@ -128,9 +139,9 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
             tickMargin={12}
             axisLine={false}
             tick={(props) => {
-              const { x, y, payload } = props;
-              const data = chartData[payload.index];
-              const isHovered = hoveredGameweek === data.gameweek;
+              const { x, y, payload } = props
+              const data = chartData[payload.index]
+              const isHovered = hoveredGameweek === data.gameweek
               return (
                 <g transform={`translate(${x},${y})`}>
                   <image
@@ -140,12 +151,13 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
                     width={24}
                     height={24}
                     style={{
-                      opacity: hoveredGameweek === null ? 1 : (isHovered ? 1 : 0.4),
-                      transition: 'all 0.2s ease-in-out',
+                      opacity:
+                        hoveredGameweek === null ? 1 : isHovered ? 1 : 0.4,
+                      transition: "all 0.2s ease-in-out",
                     }}
                   />
                 </g>
-              );
+              )
             }}
           />
           <YAxis
@@ -166,14 +178,14 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
             strokeWidth={2}
             dot={{
               fill: "var(--color-againstGoals)",
-              opacity: 1
+              opacity: 1,
             }}
             activeDot={{
-              r: 6
+              r: 6,
             }}
             style={{
               opacity: hoveredGameweek === null ? 1 : 0.4,
-              transition: 'opacity 0.2s ease-in-out'
+              transition: "opacity 0.2s ease-in-out",
             }}
           />
           <Line
@@ -183,14 +195,14 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
             strokeWidth={2}
             dot={{
               fill: "var(--color-forGoals)",
-              opacity: 1
+              opacity: 1,
             }}
             activeDot={{
-              r: 6
+              r: 6,
             }}
             style={{
               opacity: hoveredGameweek === null ? 1 : 0.4,
-              transition: 'opacity 0.2s ease-in-out'
+              transition: "opacity 0.2s ease-in-out",
             }}
           />
         </LineChart>

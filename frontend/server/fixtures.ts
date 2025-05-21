@@ -1,22 +1,22 @@
 "use server"
 
-import { Client, schemas, unwrap } from '../utils/api/client'
-import { notFound } from 'next/navigation'
-import { cache } from 'react'
-import { operations } from '@/client'
+import type { operations } from "@/client"
+import { notFound } from "next/navigation"
+import { cache } from "react"
+import { type Client, type schemas, unwrap } from "../utils/api/client"
 
 const _getFixtures = async (
   api: Client,
   params?: operations["fixtures_get_fixtures_query"]["parameters"]["query"],
-): Promise<schemas['FixtureReadPagination']> => {
+): Promise<schemas["FixtureReadPagination"]> => {
   return unwrap(
-    api.GET('/api/v1/fixtures', {
+    api.GET("/api/v1/fixtures", {
       params: {
         query: {
-            ...params,
+          ...params,
         },
       },
-      cache: 'no-store',
+      cache: "no-store",
     }),
     {
       404: notFound,
