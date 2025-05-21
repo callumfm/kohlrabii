@@ -3,7 +3,7 @@
 import { FormattedDate } from "@/components/Date/FormattedDate"
 import { PrefetchOnHoverLink } from "@/components/Link/PrefetchOnHoverLink"
 import { Card, CardContent } from "@/components/ui/card"
-import type { schemas } from "@/utils/api/client"
+import type { schemas } from "@/lib/api/core"
 import { CONFIG } from "@/utils/config"
 import { dashboardPath } from "@/utils/path"
 import Image from "next/image"

@@ -1,5 +1,5 @@
-import { type operations, type schemas, unwrap } from "@/utils/api/client"
-import { api } from "@/utils/client"
+import { api } from "@/lib/api/client"
+import { type operations, type schemas, unwrap } from "@/lib/api/core"
 import { useQuery } from "@tanstack/react-query"
 
 export const useTeams = (

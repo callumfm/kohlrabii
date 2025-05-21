@@ -1,4 +1,3 @@
-import type { components, paths } from "@/client"
 import createOpenAPIFetchClient, {
   type FetchResponse,
   type HeadersOptions,
@@ -8,6 +7,7 @@ import type {
   ResponseObjectMap,
   SuccessResponse,
 } from "openapi-typescript-helpers"
+import type { components, paths } from "./schema"
 
 export const createClient = (
   baseUrl: string,

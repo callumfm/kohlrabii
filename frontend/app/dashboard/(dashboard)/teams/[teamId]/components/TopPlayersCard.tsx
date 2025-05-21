@@ -14,7 +14,7 @@ const players = [
     first_name: "Olivia",
     second_name: "Martin",
     position: "FWD",
-    image: "/avatars/01.png",
+    image: "/avatars/bruno.png",
     points: "24",
   },
   {
@@ -22,7 +22,7 @@ const players = [
     first_name: "Isabella",
     second_name: "Nguyen",
     position: "MID",
-    image: "/avatars/02.png",
+    image: "/avatars/bruno.png",
     points: "8",
   },
   {
@@ -30,7 +30,7 @@ const players = [
     first_name: "Sofia",
     second_name: "Davis",
     position: "DEF",
-    image: "/avatars/03.png",
+    image: "/avatars/bruno.png",
     points: "2",
   },
 ]
@@ -49,7 +49,7 @@ export function TopPlayersCard() {
           {players.map((player) => (
             <div key={player.id} className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Avatar>
+                <Avatar className="border-2 border-primary">
                   <AvatarImage src={player.image} alt={player.first_name} />
                   <AvatarFallback>
                     {player.second_name.substring(0, 2)}

@@ -1,5 +1,5 @@
+import { createClient } from "@/lib/supabase/server"
 import { CONFIG } from "@/utils/config"
-import { createClient } from "@/utils/supabase/server"
 import Link from "next/link"
 import { Button } from "../ui/button"
 

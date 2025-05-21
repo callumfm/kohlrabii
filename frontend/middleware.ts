@@ -1,5 +1,5 @@
+import { updateSession } from "@/lib/supabase/middleware"
 import { CONFIG } from "@/utils/config"
-import { updateSession } from "@/utils/supabase/middleware"
 import type { UserResponse } from "@supabase/auth-js"
 import { type NextRequest, NextResponse } from "next/server"
 

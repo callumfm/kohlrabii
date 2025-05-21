@@ -2,7 +2,7 @@ import {
   type ClientResponseError,
   NotFoundResponseError,
   UnauthorizedResponseError,
-} from "@/utils/api/client"
+} from "@/lib/api/core"
 
 export const authenticatingRetry = (
   failureCount: number,

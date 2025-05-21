@@ -1,5 +1,5 @@
-import { unwrap } from "@/utils/api/client"
-import { getServerSideAPI } from "@/utils/client/serverside"
+import { unwrap } from "@/lib/api/core"
+import { getServerSideAPI } from "@/lib/api/server"
 import { CONFIG } from "@/utils/config"
 import { type NextRequest, NextResponse } from "next/server"
 

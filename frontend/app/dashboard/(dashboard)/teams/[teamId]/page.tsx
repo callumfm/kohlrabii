@@ -1,15 +1,11 @@
-import { getFixtures } from "@/server/fixtures"
-import { getTeam } from "@/server/teams"
-import { getServerSideAPI } from "@/utils/client/serverside"
+import { getFixtures } from "@/actions/fixtures"
+import { getTeam } from "@/actions/teams"
+import { getServerSideAPI } from "@/lib/api/server"
 import { ClientPage } from "./ClientPage"
 
-interface PageProps {
-  params: Promise<{
-    teamId: string
-  }>
-}
-
-export default async function Page({ params }: PageProps) {
+export default async function Page({
+  params,
+}: { params: Promise<{ teamId: string }> }) {
   const resolvedParams = await params
   const teamId = Number.parseInt(resolvedParams.teamId, 10)
   const api = await getServerSideAPI()

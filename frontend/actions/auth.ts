@@ -1,8 +1,8 @@
 "use server"
 
+import { createClient } from "@/lib/supabase/server"
 import { CONFIG } from "@/utils/config"
 import { encodedRedirect } from "@/utils/redirect"
-import { createClient } from "@/utils/supabase/server"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 

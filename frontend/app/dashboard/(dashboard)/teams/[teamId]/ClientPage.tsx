@@ -1,15 +1,13 @@
 "use client"
 
-import type { schemas } from "@/utils/api/client"
+import type { schemas } from "@/lib/api/core"
+import { usePageTitle } from "@/providers/PageTitle"
+import { useEffect } from "react"
 import { FixturesChart } from "./components/FixturesChart"
 import { ResultsChart } from "./components/ResultsChart"
 import { StrengthCard } from "./components/StrengthCard"
 import { TeamProfileCard } from "./components/TeamProfileCard"
 import { TopPlayersCard } from "./components/TopPlayersCard"
-
-// Common card styles
-const cardStyles =
-  "data-[slot=card]:shadow-xs data-[slot=card]:bg-gradient-to-t data-[slot=card]:from-primary/5 data-[slot=card]:to-card dark:data-[slot=card]:bg-card"
 
 interface ClientPageProps {
   team: schemas["TeamRead"]
@@ -17,8 +15,13 @@ interface ClientPageProps {
 }
 
 export function ClientPage({ team, fixtures }: ClientPageProps) {
+  const { setTitle } = usePageTitle()
+  useEffect(() => {
+    setTitle(team.name)
+  }, [team.name, setTitle])
+
   return (
-    <div className={cardStyles}>
+    <div className="data-[slot=card]:shadow-xs data-[slot=card]:bg-gradient-to-t data-[slot=card]:from-primary/5 data-[slot=card]:to-card dark:data-[slot=card]:bg-card">
       {/* Header */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 px-4 lg:px-6">
         <TeamProfileCard

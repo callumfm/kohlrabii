@@ -3,7 +3,6 @@
 import { Check, ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
-import type { Season, Team } from "@/client/types"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -19,12 +18,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useTeams } from "@/hooks/queries/teams"
+import type { TSeason, TTeam } from "@/lib/api/types"
 import { cn } from "@/utils/merge"
 
 type TeamSelectorProps = {
-  currentTeam: Team | null
-  onChange: (team: Team | null) => void
-  season: Season
+  currentTeam: TTeam | null
+  onChange: (team: TTeam | null) => void
+  season: TSeason
 }
 
 export function TeamSelector({

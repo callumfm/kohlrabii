@@ -1,9 +1,9 @@
-import type { Season } from "@/client/types"
+import { getFixtures } from "@/actions/fixtures"
+import { getLatestSeason } from "@/actions/seasons"
 import { fixturesKey } from "@/hooks/queries/fixtures"
-import { getFixtures } from "@/server/fixtures"
-import { getLatestSeason } from "@/server/seasons"
-import { queryClient } from "@/utils/api/query"
-import { getServerSideAPI } from "@/utils/client/serverside"
+import { queryClient } from "@/lib/api/query"
+import { getServerSideAPI } from "@/lib/api/server"
+import type { TSeason } from "@/lib/api/types"
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query"
 import ClientPage from "./ClientPage"
 
@@ -14,13 +14,13 @@ export default async function Page(props: {
 
   const searchParams = await props.searchParams
   let gameweek = searchParams?.gw ? Number(searchParams.gw) : undefined
-  let season = searchParams?.s as Season | undefined
+  let season = searchParams?.s as TSeason | undefined
 
   if (!gameweek || !season) {
     const { season: latestSeason, gameweek: latestGameweek } =
       await getLatestSeason(api)
     gameweek = latestGameweek
-    season = latestSeason as Season
+    season = latestSeason as TSeason
   }
 
   await queryClient.prefetchQuery({

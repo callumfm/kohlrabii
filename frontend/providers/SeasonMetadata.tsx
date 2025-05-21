@@ -1,10 +1,10 @@
 "use client"
 
-import type { Season } from "@/client/types"
+import type { TSeason } from "@/lib/api/types"
 import { type ReactNode, createContext, useContext } from "react"
 
 type SeasonContextType = {
-  latestSeason: Season
+  latestSeason: TSeason
   latestGameweek: number
 }
 
@@ -15,7 +15,7 @@ export function SeasonContextProvider({
   latestGameweek,
   children,
 }: {
-  latestSeason: Season
+  latestSeason: TSeason
   latestGameweek: number
   children: ReactNode
 }) {

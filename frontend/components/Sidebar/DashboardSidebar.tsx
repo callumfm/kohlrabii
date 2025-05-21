@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/hooks/User/useUser"
+import { useUser } from "@/hooks/useUser"
 import { dashboardPath } from "@/utils/path"
 import Link from "next/link"
 

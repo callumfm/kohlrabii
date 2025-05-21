@@ -1,5 +1,5 @@
-import { type operations, unwrap } from "@/utils/api/client"
-import { api } from "@/utils/client"
+import { api } from "@/lib/api/client"
+import { type operations, unwrap } from "@/lib/api/core"
 import { useQuery } from "@tanstack/react-query"
 
 type TParams = operations["fixtures_get_fixtures_query"]["parameters"]["query"]

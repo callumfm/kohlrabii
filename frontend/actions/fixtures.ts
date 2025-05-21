@@ -1,9 +1,9 @@
 "use server"
 
-import type { operations } from "@/client"
+import { type Client, type schemas, unwrap } from "@/lib/api/core"
+import type { operations } from "@/lib/api/schema"
 import { notFound } from "next/navigation"
 import { cache } from "react"
-import { type Client, type schemas, unwrap } from "../utils/api/client"
 
 const _getFixtures = async (
   api: Client,

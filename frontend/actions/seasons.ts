@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation"
 import { cache } from "react"
-import { type Client, type schemas, unwrap } from "../utils/api/client"
+import { type Client, type schemas, unwrap } from "../lib/api/core"
 
 const _getLatestSeason = async (
   api: Client,

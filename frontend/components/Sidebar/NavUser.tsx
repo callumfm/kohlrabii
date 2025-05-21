@@ -2,6 +2,7 @@
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react"
 
+import { signOutAction } from "@/actions/auth"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -18,7 +19,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { signOutAction } from "@/server/auth"
 
 export type TUser = {
   name: string

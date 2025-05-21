@@ -1,6 +1,5 @@
 "use client"
 
-import type { Season, Team } from "@/client/types"
 import { GameweekSelector } from "@/components/Selector/GameweekSelector"
 import { SeasonSelector } from "@/components/Selector/SeasonSelector"
 import { TeamSelector } from "@/components/Selector/TeamSelector"
@@ -9,9 +8,10 @@ import {
   fixturesKey,
   useFixtures,
 } from "@/hooks/queries/fixtures"
+import { ClientResponseError, type schemas } from "@/lib/api/core"
+import { queryClient } from "@/lib/api/query"
+import type { TSeason, TTeam } from "@/lib/api/types"
 import { useSeasonMetadata } from "@/providers/SeasonMetadata"
-import { ClientResponseError, type schemas } from "@/utils/api/client"
-import { queryClient } from "@/utils/api/query"
 import { notFound, usePathname } from "next/navigation"
 import { type FC, Suspense, useMemo, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
@@ -20,7 +20,7 @@ import { GameweekResultsSkeleton } from "./components/GameweekResultsSkeleton"
 
 type TFilteredFixturesProps = {
   gameweek: number
-  season: Season
+  season: TSeason
   team_id?: number | null
 }
 
@@ -56,7 +56,7 @@ const getFilteredFixtures = ({
 
 type TClientPageProps = {
   initialGameweek?: number
-  initialSeason?: Season
+  initialSeason?: TSeason
 }
 
 const ClientPage: FC<TClientPageProps> = ({
@@ -71,12 +71,12 @@ const ClientPage: FC<TClientPageProps> = ({
   )
   const [currentGameweek, setCurrentGameweek] =
     useState<number>(selectedGameweek)
-  const [currentSeason, setCurrentSeason] = useState<Season>(
+  const [currentSeason, setCurrentSeason] = useState<TSeason>(
     initialSeason || latestSeason,
   )
-  const [currentTeam, setCurrentTeam] = useState<Team | null>(null)
+  const [currentTeam, setCurrentTeam] = useState<TTeam | null>(null)
 
-  const updateURL = useDebouncedCallback((gw: number, season: Season) => {
+  const updateURL = useDebouncedCallback((gw: number, season: TSeason) => {
     setCurrentGameweek(gw)
     const params = new URLSearchParams()
     params.set("gw", gw.toString())
@@ -98,7 +98,7 @@ const ClientPage: FC<TClientPageProps> = ({
     updateURL(gw, currentSeason)
   }
 
-  const handleSeasonChange = (season: Season) => {
+  const handleSeasonChange = (season: TSeason) => {
     setCurrentSeason(season)
     updateURL(currentGameweek, season)
   }

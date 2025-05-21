@@ -6,7 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart"
-import type { schemas } from "@/utils/api/client"
+import type { schemas } from "@/lib/api/core"
 import { CONFIG } from "@/utils/config"
 import React from "react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"

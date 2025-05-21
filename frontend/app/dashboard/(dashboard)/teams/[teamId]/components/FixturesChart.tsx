@@ -7,7 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import type { schemas } from "@/utils/api/client"
+import type { schemas } from "@/lib/api/core"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 const chartConfig = {
