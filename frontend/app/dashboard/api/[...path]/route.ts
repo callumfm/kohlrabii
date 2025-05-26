@@ -12,6 +12,8 @@ export const GET = async (request: NextRequest) => {
     pathname = pathname.replace("/dashboard", "")
   }
 
+  console.log("Request END", Date.now())
+
   const data = await unwrap(
     api.GET(pathname as any, {
       params: {
@@ -21,6 +23,8 @@ export const GET = async (request: NextRequest) => {
       },
     }),
   )
+
+  console.log("Request SERVER END", Date.now())
 
   return NextResponse.json(data, {
     status: data.status,

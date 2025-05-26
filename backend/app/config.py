@@ -96,7 +96,7 @@ class PostgresConfig(BaseSettings):
     model_config = get_model_config()
 
     DB_HOST: str
-    DB_PORT: int = 5432
+    DB_PORT: int = 5432  # 5432: direct connection for migrations
     DB_USER: str
     DB_PASS: str
     DB_NAME: str

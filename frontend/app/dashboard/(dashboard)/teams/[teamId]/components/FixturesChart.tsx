@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartCard } from "@/components/Card/ChartCard"
+import { ChartCard } from "@/components/common/Card/ChartCard"
 import {
   type ChartConfig,
   ChartContainer,

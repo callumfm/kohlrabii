@@ -3,8 +3,8 @@
 import { ArrowUpCircleIcon, Calendar1Icon, UsersRoundIcon } from "lucide-react"
 import type * as React from "react"
 
-import { NavMain } from "@/components/Sidebar/NavMain"
-import { NavUser, type TUser } from "@/components/Sidebar/NavUser"
+import { NavMain } from "@/components/common/Sidebar/NavMain"
+import { NavUser, type TUser } from "@/components/common/Sidebar/NavUser"
 import {
   Sidebar,
   SidebarContent,

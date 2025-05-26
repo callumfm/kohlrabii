@@ -1,4 +1,4 @@
-import { toast } from "@/components/Toast/use-toast"
+import { toast } from "@/components/common/Toast/use-toast"
 import { CONFIG } from "@/utils/config"
 import {
   type Client,

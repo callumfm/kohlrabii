@@ -1,6 +1,6 @@
 import { getLatestSeason } from "@/actions/seasons"
-import { AppSidebar } from "@/components/Sidebar/DashboardSidebar"
-import { SiteHeader } from "@/components/Sidebar/SiteHeader"
+import { AppSidebar } from "@/components/common/Sidebar/DashboardSidebar"
+import { SiteHeader } from "@/components/common/Sidebar/SiteHeader"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { getServerSideAPI } from "@/lib/api/server"
 import type { TSeason } from "@/lib/api/types"

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { CONFIG } from "@/utils/config"
 import Link from "next/link"
-import { Button } from "../ui/button"
+import { Button } from "../../ui/button"
 
 export default async function AuthButton() {
   const supabase = await createClient()
@@ -13,7 +13,7 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       <Button asChild size="sm" variant={"outline"}>
-        <Link href={CONFIG.DASHBOARD_URL}>Dashboard</Link>
+        <Link href={`${CONFIG.DASHBOARD_URL}/`}>Dashboard</Link>
       </Button>
     </div>
   ) : (

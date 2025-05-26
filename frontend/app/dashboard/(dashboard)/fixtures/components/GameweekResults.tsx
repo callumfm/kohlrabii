@@ -1,7 +1,7 @@
 "use client"
 
-import { FormattedDate } from "@/components/Date/FormattedDate"
-import { PrefetchOnHoverLink } from "@/components/Link/PrefetchOnHoverLink"
+import { FormattedDate } from "@/components/common/Date/FormattedDate"
+import { PrefetchOnHoverLink } from "@/components/common/Link/PrefetchOnHoverLink"
 import { Card, CardContent } from "@/components/ui/card"
 import type { schemas } from "@/lib/api/core"
 import { CONFIG } from "@/utils/config"

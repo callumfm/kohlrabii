@@ -1,4 +1,4 @@
-import HeaderAuth from "@/components/Auth/AuthButton"
+import HeaderAuth from "@/components/common/Auth/AuthButton"
 import { ThemeProvider } from "next-themes"
 import Link from "next/link"
 

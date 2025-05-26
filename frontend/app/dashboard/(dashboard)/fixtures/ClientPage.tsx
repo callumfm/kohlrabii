@@ -1,8 +1,8 @@
 "use client"
 
-import { GameweekSelector } from "@/components/Selector/GameweekSelector"
-import { SeasonSelector } from "@/components/Selector/SeasonSelector"
-import { TeamSelector } from "@/components/Selector/TeamSelector"
+import { GameweekSelector } from "@/components/common/Selector/GameweekSelector"
+import { SeasonSelector } from "@/components/common/Selector/SeasonSelector"
+import { TeamSelector } from "@/components/common/Selector/TeamSelector"
 import {
   fetchFixtures,
   fixturesKey,
@@ -29,6 +29,7 @@ const getFilteredFixtures = ({
   season,
   team_id,
 }: TFilteredFixturesProps) => {
+  console.log("Request START", Date.now())
   const { data, error } = useFixtures(
     { season: season, gameweek: gameweek },
     { suspense: true },
@@ -65,7 +66,6 @@ const ClientPage: FC<TClientPageProps> = ({
 }) => {
   const pathname = usePathname()
   const { latestSeason, latestGameweek } = useSeasonMetadata()
-
   const [selectedGameweek, setSelectedGameweek] = useState<number>(
     initialGameweek || latestGameweek,
   )

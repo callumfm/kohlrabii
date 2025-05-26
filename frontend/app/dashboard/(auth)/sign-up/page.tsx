@@ -1,6 +1,6 @@
 import { signUpAction } from "@/actions/auth"
-import { SubmitButton } from "@/components/Button/SubmitButton"
-import { FormMessage, type Message } from "@/components/Form/FormMessage"
+import { SubmitButton } from "@/components/common/Button/SubmitButton"
+import { FormMessage, type Message } from "@/components/common/Form/FormMessage"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
