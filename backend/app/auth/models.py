@@ -1,16 +1,12 @@
-from gotrue import User  # type: ignore
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
 
 from app.models import KolModel
 
 
-class Token(BaseModel):
-    access_token: str | None = None
-    refresh_token: str | None = None
-
-
-class UserIn(Token, User):  # type: ignore
-    pass
+class User(KolModel):
+    id: str
+    email: EmailStr
+    role: str
 
 
 class UserSignUp(KolModel):

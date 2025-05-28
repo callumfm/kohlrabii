@@ -1,7 +1,7 @@
 import time
 from collections.abc import Awaitable, Callable
 from contextvars import ContextVar
-from typing import Final
+from typing import Final, TypeAlias
 from uuid import uuid1
 
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -17,15 +17,15 @@ _request_id_ctx_var: ContextVar[str | None] = ContextVar(
     REQUEST_ID_CTX_KEY, default=None
 )
 
+CallNext: TypeAlias = Callable[[Request], Awaitable[Response]]
+
 
 def get_request_id() -> str | None:
     return _request_id_ctx_var.get()
 
 
 class ProcessTimeMiddleware(BaseHTTPMiddleware):
-    async def dispatch(
-        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: CallNext) -> Response:
         start_time = time.perf_counter()
         response = await call_next(request)
         process_time = time.perf_counter() - start_time
@@ -36,9 +36,7 @@ class ProcessTimeMiddleware(BaseHTTPMiddleware):
 
 
 class DbSessionMiddleware(BaseHTTPMiddleware):
-    async def dispatch(
-        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: CallNext) -> Response:
         request_id = str(uuid1())
         ctx_token = _request_id_ctx_var.set(request_id)
 

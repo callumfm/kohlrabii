@@ -29,7 +29,6 @@ const getFilteredFixtures = ({
   season,
   team_id,
 }: TFilteredFixturesProps) => {
-  console.log("Request START", Date.now())
   const { data, error } = useFixtures(
     { season: season, gameweek: gameweek },
     { suspense: true },

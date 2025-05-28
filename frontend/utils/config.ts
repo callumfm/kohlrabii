@@ -25,6 +25,6 @@ export const CONFIG = {
   DASHBOARD_DOMAIN: dashboardDomain,
   DASHBOARD_URL: dashboardURL,
   IS_PREVIEW: isPreview,
-  SENTRY_DSN: process.env.SENTRY_DSN,
+  SENTRY_DSN: process.env.SENTRY_DSN as string,
   SUPABASE_BUCKET_URL: supabaseBucketURL,
 }

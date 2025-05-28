@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server"
 import { cookies, headers } from "next/headers"
 import { cache } from "react"
 import type { Client } from "./core"
@@ -30,7 +31,7 @@ export const createServerSideAPI = (
   }
 
   const client = baseCreateClient(
-    process.env.SERVER_API_URL as string,
+    process.env.NEXT_PUBLIC_API_URL as string,
     token,
     apiHeaders,
   )
@@ -38,7 +39,12 @@ export const createServerSideAPI = (
   return client
 }
 
-const _getServerSideAPI = async (token?: string): Promise<Client> => {
+const _getServerSideAPI = async (): Promise<Client> => {
+  const supabase = await createClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  const token = session?.access_token
   const headers_ = await headers()
   const cookies_ = await cookies()
   return createServerSideAPI(headers_, cookies_, token)

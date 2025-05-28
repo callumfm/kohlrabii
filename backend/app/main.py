@@ -1,6 +1,9 @@
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, Depends, FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from app.auth.deps import get_current_user
+
+# from starlette.middleware.gzip import GZipMiddleware
 from app.config import config
 from app.enums import Environment
 from app.exceptions import add_exception_handlers
@@ -17,13 +20,13 @@ app = FastAPI(
     openapi_url=f"{config.API_V1_STR}/openapi.json",
     generate_unique_id_function=lambda r: f"{r.tags[0]}_{r.name}",
     debug=config.ENVIRONMENT != Environment.PROD,
+    dependencies=[Depends(get_current_user)],
 )
 
 # Exception handlers
 add_exception_handlers(app)
 
 # Middleware
-app.add_middleware(DbSessionMiddleware)
 app.add_middleware(ProcessTimeMiddleware)
 app.add_middleware(
     CORSMiddleware,
@@ -34,6 +37,8 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Process-Time"],
 )
+# app.add_middleware(AuthMiddleware, exclude_paths=["/docs", "/openapi.json"])
+app.add_middleware(DbSessionMiddleware)
 
 # API routes
 api_router = APIRouter()
