@@ -1,7 +1,4 @@
 {
-  "functions": {
-    "**/*": {
-      "regions": ["yyz1"]
-    }
-  }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["yyz1"]
 }
