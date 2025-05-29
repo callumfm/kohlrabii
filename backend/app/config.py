@@ -1,18 +1,21 @@
+import os
 import urllib.parse
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, no_type_check
 
-# from datetime import datetime
 from pydantic import computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.enums import Environment
 
+Environ: Environment = Environment(os.environ.get("ENVIRONMENT", "dev"))
 
+
+@lru_cache(maxsize=1)
 def get_model_config() -> SettingsConfigDict:
-    env_file = Path(__file__).resolve().parent.parent / ".env.local"
+    env_file = Path(__file__).resolve().parent.parent / f".env.{Environ.value}"
     return SettingsConfigDict(
         env_file=str(env_file),
         env_ignore_empty=True,
@@ -27,7 +30,7 @@ class AppConfig(BaseSettings):
 
     PROJECT_NAME: str = "kohlrabii"
     API_V1_STR: str = "/api/v1"
-    ENVIRONMENT: Environment = Environment.DEV
+    ENVIRONMENT: Environment = Environ
 
     # RESEND_API_KEY: str
     SENTRY_DSN: str
@@ -68,7 +71,7 @@ class PostgresConfig(BaseSettings):
     model_config = get_model_config()
 
     DB_HOST: str
-    DB_PORT: int = 5432  # 5432: direct connection for migrations
+    DB_PORT: int = 6543  # 5432: direct connection for migrations
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
@@ -79,7 +82,10 @@ class PostgresConfig(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:
+    def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl | str:
+        if Environ == Environment.TEST:
+            return "sqlite:///:memory:"
+
         return MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             host=self.DB_HOST,
@@ -92,6 +98,14 @@ class PostgresConfig(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_ENGINE_ARGS(self) -> dict[str, Any]:
+        if Environ == Environment.TEST:
+            from sqlalchemy.pool import StaticPool
+
+            return {
+                "connect_args": {"check_same_thread": False},
+                "poolclass": StaticPool,
+            }
+
         return {
             "pool_size": self.DB_POOL_SIZE,
             "max_overflow": self.DB_MAX_OVERFLOW,
@@ -155,10 +169,10 @@ class FootballConfig(BaseSettings):
 @no_type_check
 @lru_cache(maxsize=1)
 def load_config() -> AppConfig | SupabaseConfig | PostgresConfig | FootballConfig:
-    class ProdDevConfig(AppConfig, SupabaseConfig, PostgresConfig, FootballConfig):
+    class Config(AppConfig, SupabaseConfig, PostgresConfig, FootballConfig):
         pass
 
-    return ProdDevConfig()
+    return Config()
 
 
 config = load_config()

@@ -67,6 +67,10 @@ ignore = [
     "B904",  # Allow raising exceptions without from e, for HTTPException
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ARG001"]
+"tests/conftest.py" = ["E402"]
+
 [tool.ruff.lint.pyupgrade]
 # Preserve types, even if a file imports from __future__ import annotations.
 keep-runtime-typing = true

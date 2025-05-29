@@ -36,12 +36,12 @@ Install the pre-commit hooks:
 uv run pre-commit install
 ```
 
-Create a `.env.local` file using the `.env.example` template and populate with your own secrets.
+Create a `.env.dev` file using the `.env.test` template and populate with your own secrets.
 ```bash
-cp .env.example .env.local
+cp .env.test .env.dev
 ```
 
 To run the server locally, start docker desktop and run:
 ```bash
-docker compose --env-file .env.local watch
+docker compose --env-file .env.dev watch
 ```

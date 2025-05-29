@@ -1,4 +1,4 @@
-name: Biome
+name: Lint Frontend
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - synchronize
 
 jobs:
-  lint-frontend:
+  biome:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

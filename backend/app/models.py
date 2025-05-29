@@ -1,6 +1,4 @@
-import uuid
-
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class KolModel(BaseModel):
@@ -28,9 +26,3 @@ class Pagination(KolModel):
 
 class Message(BaseModel):
     message: str
-
-
-class TokenPayload(BaseModel):
-    sub: uuid.UUID
-    name: str
-    email: EmailStr

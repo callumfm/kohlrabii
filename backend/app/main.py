@@ -13,7 +13,8 @@ from app.seasons.api import router as seasons_router
 from app.sentry import configure_sentry
 from app.teams.api import router as teams_router
 
-configure_sentry()
+if config.ENVIRONMENT != Environment.TEST:
+    configure_sentry()
 
 app = FastAPI(
     title=config.PROJECT_NAME,
