@@ -20,7 +20,9 @@ class ScoreMetrics:
     r2: float
 
     @classmethod
-    def from_predictions(cls, y: pd.Series, yhat: pd.Series) -> ScoreMetrics:
+    def from_predictions(
+        cls, y: pd.Series[float | int], yhat: pd.Series[float | int]
+    ) -> ScoreMetrics:
         """Compute the score metrics given a model prediction."""
         return cls(
             mae=mean_absolute_error(y, yhat),
@@ -29,17 +31,17 @@ class ScoreMetrics:
             r2=r2_score(y, yhat),
         )
 
-    def as_series(self) -> pd.Series:
+    def as_series(self) -> pd.Series[float]:
         """Return the class as a pandas series."""
-        return pd.Series(asdict(self))
+        return pd.Series(asdict(self), dtype=float)
 
     def __str__(self) -> str:
         """String representation stores values in a formatted table."""
         table = [
             ["Metric", "Score"],
-            ["Mean Absolute Error (MAE)", self.mae],
-            ["Mean Squared Error (MSE)", self.mse],
-            ["Root Mean Squared Error (RMSE)", self.rmse],
-            ["R-Squared (r2)", self.r2],
+            ["Mean Absolute Error (MAE)", str(self.mae)],
+            ["Mean Squared Error (MSE)", str(self.mse)],
+            ["Root Mean Squared Error (RMSE)", str(self.rmse)],
+            ["R-Squared (r2)", str(self.r2)],
         ]
-        return "/n".join(table)
+        return "/n".join([", ".join(row) for row in table])

@@ -102,20 +102,18 @@ def fill_fixture_forecasts(
 ) -> None:
     """Back-fill team performance forecasts over historical data."""
     logger.info("Filling 'FixtureForecasts' table...")
-    if not split_gameweek:
-        split_gameweek = config.CURRENT_GAMEWEEK
-    if not split_season:
-        split_season = config.CURRENT_SEASON
+    split_gw: int = split_gameweek or config.CURRENT_GAMEWEEK
+    split_szn: str = split_season or config.CURRENT_SEASON
 
     train = get_train_results(
         session=session,
-        end_season=split_season,
-        end_gw=split_gameweek,
+        end_season=split_szn,
+        end_gw=split_gw,
     )
     test = get_test_fixtures(
         session=session,
-        season=split_season,
-        start_gw=split_gameweek,
+        season=split_szn,
+        start_gw=split_gw,
         horizon=horizon,
     )
     model = DixonColesModel(**train)  # type: ignore[arg-type]

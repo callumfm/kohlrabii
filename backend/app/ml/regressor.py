@@ -32,7 +32,7 @@ class XGBModel:
     def fit_predict_score(
         self,
         X: pd.DataFrame,
-        y: pd.Series,
+        y: pd.Series[float],
         seed: int,
         test_size: float,
         tune_hyperparams: bool = False,
@@ -48,7 +48,10 @@ class XGBModel:
         return metrics
 
     def fit(
-        self, X_train: pd.DataFrame, y_train: pd.Series, tune_hyperparams: bool = False
+        self,
+        X_train: pd.DataFrame,
+        y_train: pd.Series[float],
+        tune_hyperparams: bool = False,
     ) -> XGBRegressor:
         """Fit the model."""
         params = self._find_optimal_params(X_train, y_train) if tune_hyperparams else {}
@@ -56,24 +59,23 @@ class XGBModel:
         self.model.fit(X_train, y_train)
         return self.model
 
-    def predict(self, X: pd.DataFrame) -> pd.Series:
+    def predict(self, X: pd.DataFrame) -> pd.Series[float]:
         """Predict values."""
-        yhat = self.model.predict(X)
-        return yhat
+        return pd.Series(self.model.predict(X), dtype=float)
 
     @staticmethod
     def _find_optimal_params(
-        X_train: pd.DataFrame, y_train: pd.Series
+        X_train: pd.DataFrame, y_train: pd.Series[float]
     ) -> dict[str, Any]:
         """Tune model hyperparameters."""
         regressor = XGBRegressor()
         model = RandomizedSearchCV(regressor, **CV_CONFIG)
         model.fit(X_train, y_train)
         logger.info(f"Optimal model params: {model.best_params_}")
-        return model.best_params_
+        return dict(model.best_params_)
 
     @staticmethod
-    def compute_metrics(y: pd.Series, yhat: pd.Series) -> ScoreMetrics:
+    def compute_metrics(y: pd.Series[float], yhat: pd.Series[float]) -> ScoreMetrics:
         """Compute error metrics and scores."""
         return ScoreMetrics.from_predictions(y, yhat)
 
@@ -81,5 +83,6 @@ class XGBModel:
     def scale_features(X: pd.DataFrame) -> pd.DataFrame:
         """Normalize feature values."""
         scaler = StandardScaler()
-        X = pd.DataFrame(scaler.fit_transform(X), columns=X.columns).set_index(X.index)
-        return X
+        return pd.DataFrame(scaler.fit_transform(X), columns=X.columns).set_index(
+            X.index
+        )

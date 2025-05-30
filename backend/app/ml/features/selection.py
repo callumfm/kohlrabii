@@ -21,11 +21,11 @@ warnings.filterwarnings(
     message="divide by zero encountered in scalar divide",
 )
 
-VIF_THRESHOLD = 100_000
-MAX_FEATURES = 30
-ERROR_METRIC = "mae"
-TEST_SET_SIZE = 0.25
-RANDOM_STATES = [0, 420, 666]
+VIF_THRESHOLD: int = 100_000
+MAX_FEATURES: int = 30
+ERROR_METRIC: ScoreMetric = "mae"
+TEST_SET_SIZE: float = 0.25
+RANDOM_STATES: list[int] = [0, 420, 666]
 
 
 @dataclass
@@ -34,8 +34,8 @@ class ModelInfo:
 
     features: list[str]
     n_features: int
-    stats_train: pd.Series
-    stats_test: pd.Series
+    stats_train: pd.Series[float]
+    stats_test: pd.Series[float]
     trained_model: Any
 
     @classmethod
@@ -70,7 +70,7 @@ def get_low_vif_features(X: pd.DataFrame, threshold: int = VIF_THRESHOLD) -> lis
 
 
 def remove_low_correlation_features(
-    X: pd.DataFrame, y: pd.Series, max_features: int = MAX_FEATURES
+    X: pd.DataFrame, y: pd.Series[float | int], max_features: int = MAX_FEATURES
 ) -> pd.DataFrame:
     """Due to the large number of starting features, the feature selection may
     encounter performance issues and some models suffer from the curse of
@@ -94,7 +94,7 @@ def remove_low_correlation_features(
 def feature_selection(
     raw_model: XGBModel,
     X: pd.DataFrame,
-    y: pd.Series,
+    y: pd.Series[float | int],
     seeds: list[int] | None = None,
     metric: ScoreMetric = ERROR_METRIC,
 ) -> ModelInfo:
@@ -143,7 +143,7 @@ def feature_selection(
 def forward_feature_selection_step(
     raw_model: XGBModel,
     X: pd.DataFrame,
-    y: pd.Series,
+    y: pd.Series[float | int],
     starting_features: list[str],
     viable_features: list[str],
     seeds: list[int],
@@ -163,7 +163,7 @@ def describe_model(
     raw_model: XGBModel,
     features: list[str],
     X: pd.DataFrame,
-    y: pd.Series,
+    y: pd.Series[float | int],
     seeds: list[int],
 ) -> ModelInfo:
     """Fit a model on the train data and compute some metrics for evaluation."""

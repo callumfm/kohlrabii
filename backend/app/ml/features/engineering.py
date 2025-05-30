@@ -31,16 +31,17 @@ def get_moving_averages(features_df: pd.DataFrame) -> pd.DataFrame:
         ma_cols[f"{col}_{MA_WINDOW_SIZE}ma"] = moving_avg(features_df[col])
         ma_cols[f"{col}_ewm"] = exp_weighted_moving_avg(features_df[col])
 
-    ma_df = pd.DataFrame(ma_cols)
-    return ma_df
+    return pd.DataFrame(ma_cols)
 
 
-def exp_weighted_moving_avg(feature: pd.Series) -> pd.Series:
+def exp_weighted_moving_avg(feature: pd.Series[float | int]) -> pd.Series[float]:
     """Compute the exponential weighted moving average for a feature."""
     return feature.ewm(com=1).mean()
 
 
-def moving_avg(feature: pd.Series, window: int = MA_WINDOW_SIZE) -> pd.Series:
+def moving_avg(
+    feature: pd.Series[float | int], window: int = MA_WINDOW_SIZE
+) -> pd.Series[float]:
     """Compute the moving average for a feature."""
     return feature.rolling(window, min_periods=1).mean()
 
@@ -63,7 +64,7 @@ def get_player_features(player_df: pd.DataFrame) -> pd.DataFrame:
 
 def feature_target_split(
     df: pd.DataFrame, target: str
-) -> tuple[pd.DataFrame, pd.Series]:
+) -> tuple[pd.DataFrame, pd.Series[float | int]]:
     """Given a raw dataset, split the features and target whilst adding new features."""
     feature_cols = get_feature_columns(df.columns, target)
     logger.info(f"Total features (before feature engineering): {len(feature_cols)}")

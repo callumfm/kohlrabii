@@ -28,7 +28,6 @@ modelling = [
     "xgboost>=3.0.2",
 ]
 
-
 [tool.uv]
 dev-dependencies = [
     "pytest<8.0.0,>=7.4.3",
@@ -50,7 +49,7 @@ strict = true
 exclude = ["venv", ".venv", "migrations"]
 
 [[tool.mypy.overrides]]
-module = ["numba", "scipy.optimize"]
+module = ["numba", "scipy.optimize", "sklearn.*", "statsmodels.*"]
 ignore_missing_imports = true
 
 [tool.ruff]
