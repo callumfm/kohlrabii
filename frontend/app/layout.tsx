@@ -10,12 +10,14 @@ export const metadata = {
   description: "Premier League football predictive modelling and analytics",
 }
 
-const geistSans = Geist({
+// Fonts: Inter, Romie, Geist, Alte Haas Grotesk
+
+const geistFont = Geist({
   display: "swap",
   subsets: ["latin"],
 })
 
-const alteHaasGrotesk = localFont({
+const alteHaasGroteskFont = localFont({
   src: [
     { path: "../public/fonts/AlteHaasGroteskBold.ttf" },
     { path: "../public/fonts/AlteHaasGroteskRegular.ttf" },
@@ -29,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={geistSans.className} suppressHydrationWarning>
+    <html lang="en" className={geistFont.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <Analytics />
         {children}

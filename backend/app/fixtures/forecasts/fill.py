@@ -8,6 +8,7 @@ import pandas as pd
 from sqlalchemy import Row
 from sqlalchemy.orm import Session, aliased
 
+from app.config import config
 from app.database.core import get_session
 from app.fixtures.forecasts.dixon_coles import DixonColesModel
 from app.fixtures.forecasts.models import FixtureForecast
@@ -101,11 +102,10 @@ def fill_fixture_forecasts(
 ) -> None:
     """Back-fill team performance forecasts over historical data."""
     logger.info("Filling 'FixtureForecasts' table...")
-    # TODO: Get latest gameweek and season
     if not split_gameweek:
-        split_gameweek = 1
+        split_gameweek = config.CURRENT_GAMEWEEK
     if not split_season:
-        split_season = "2324"
+        split_season = config.CURRENT_SEASON
 
     train = get_train_results(
         session=session,

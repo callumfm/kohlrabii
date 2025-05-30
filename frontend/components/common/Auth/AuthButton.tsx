@@ -12,7 +12,7 @@ export default async function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      <Button asChild size="sm" variant={"outline"}>
+      <Button asChild size="sm" variant={"default"}>
         <Link href={`${CONFIG.DASHBOARD_URL}/`}>Dashboard</Link>
       </Button>
     </div>
