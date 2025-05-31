@@ -54,13 +54,13 @@ jobs:
       run: uv sync
       working-directory: backend
 
-    - run: uv run bash scripts/generate-client.sh
-      env:
-        VIRTUAL_ENV: backend/.venv
-
     - name: Install Frontend dependencies
       run: npm install -g pnpm && pnpm install
       working-directory: frontend
+
+    - run: uv run bash scripts/generate-client.sh
+      env:
+        VIRTUAL_ENV: backend/.venv
 
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
