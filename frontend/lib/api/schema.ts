@@ -21,23 +21,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  "/api/v1/fixtures/{fixture_id}": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get Fixture */
-    get: operations["fixtures_get_fixture"]
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   "/api/v1/teams/{team_id}": {
     parameters: {
       query?: never
@@ -100,29 +83,6 @@ export interface components {
       /** Gameweek */
       gameweek: number
     }
-    /** FixtureForecastRead */
-    FixtureForecastRead: {
-      /** Home Win */
-      home_win: number
-      /** Away Win */
-      away_win: number
-      /** Home Clean Sheet */
-      home_clean_sheet: number
-      /** Away Clean Sheet */
-      away_clean_sheet: number
-      /** Home Goals For */
-      home_goals_for: number
-      /** Away Goals For */
-      away_goals_for: number
-      /** Home Attack */
-      home_attack: number
-      /** Away Attack */
-      away_attack: number
-      /** Home Defence */
-      home_defence: number
-      /** Away Defence */
-      away_defence: number
-    }
     /** FixtureRead */
     FixtureRead: {
       /** Fixture Id */
@@ -136,7 +96,6 @@ export interface components {
       home_team: components["schemas"]["TeamRead"]
       away_team: components["schemas"]["TeamRead"]
       result: components["schemas"]["ResultRead"] | null
-      forecast: components["schemas"]["FixtureForecastRead"] | null
     }
     /** FixtureReadPagination */
     FixtureReadPagination: {
@@ -229,37 +188,6 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["FixtureReadPagination"]
-        }
-      }
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"]
-        }
-      }
-    }
-  }
-  fixtures_get_fixture: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        fixture_id: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["FixtureRead"]
         }
       }
       /** @description Validation Error */

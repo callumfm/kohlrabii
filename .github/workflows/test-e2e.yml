@@ -9,6 +9,9 @@ on:
       - opened
       - synchronize
 
+env:
+  ENVIRONMENT: test
+
 jobs:
   changes:
     runs-on: ubuntu-latest
