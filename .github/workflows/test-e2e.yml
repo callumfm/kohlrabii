@@ -1,0 +1,75 @@
+name: Test E2E
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          changed:
+            - backend/**
+            - frontend/**
+            - .env
+            - docker-compose*.yml
+            - .github/workflows/test-e2e.yml
+
+  playwright:
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.changed == 'true' }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "0.4.15"
+        enable-cache: true
+
+    - name: Install Backend dependencies
+      run: uv sync
+      working-directory: backend
+
+    - run: uv run bash scripts/generate-client.sh
+      env:
+        VIRTUAL_ENV: backend/.venv
+
+    - name: Install Frontend dependencies
+      run: npm install -g pnpm && pnpm install
+      working-directory: frontend
+
+    - name: Install Playwright Browsers
+      run: pnpm exec playwright install --with-deps
+      working-directory: frontend
+
+    - name: Run Playwright tests
+      run: pnpm exec playwright test
+      working-directory: frontend
+
+    # - uses: actions/upload-artifact@v4
+    #   if: ${{ !cancelled() }}
+    #   with:
+    #     name: playwright-report
+    #     path: playwright-report/
+    #     retention-days: 30
