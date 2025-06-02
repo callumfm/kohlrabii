@@ -1,13 +1,14 @@
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
 const vercelURL = process.env.NEXT_PUBLIC_VERCEL_URL
   ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : undefined
+  : null
 
-const webURL: URL =
+const base =
   isPreview && vercelURL
-    ? new URL(vercelURL)
-    : new URL(process.env.NEXT_PUBLIC_WEBSITE_URL!)
+    ? vercelURL
+    : process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"
 
+const webURL = new URL(base)
 const webProtocol: string = webURL.protocol
 const webDomain: string = webURL.host
 const dashboardDomain: string = isPreview ? webDomain : `dashboard.${webDomain}`
