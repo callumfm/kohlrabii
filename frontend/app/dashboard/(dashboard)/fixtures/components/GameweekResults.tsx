@@ -71,7 +71,7 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                       {/* Score */}
                       <div className="px-3 mx-2 flex-shrink-0 relative group">
                         <div className="bg-purple-900 text-white font-bold text-base w-16 flex items-center justify-center py-1 rounded-md cursor-pointer">
-                          {homeGoals && awayGoals
+                          {homeGoals != null && awayGoals != null
                             ? `${homeGoals} - ${awayGoals}`
                             : " v "}
                         </div>
