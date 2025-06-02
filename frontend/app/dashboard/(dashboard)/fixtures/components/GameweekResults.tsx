@@ -39,19 +39,8 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
             <CardContent className="p-0">
               <div className="divide-y">
                 {dateFixtures.map((fixture, index) => {
-                  const homeGoals =
-                    fixture.result?.home_score !== undefined
-                      ? fixture.result.home_score
-                      : fixture.forecast?.home_goals_for !== undefined
-                        ? Math.round(fixture.forecast.home_goals_for)
-                        : null
-
-                  const awayGoals =
-                    fixture.result?.away_score !== undefined
-                      ? fixture.result.away_score
-                      : fixture.forecast?.away_goals_for !== undefined
-                        ? Math.round(fixture.forecast.away_goals_for)
-                        : null
+                  const homeGoals = fixture.result?.home_score
+                  const awayGoals = fixture.result?.away_score
 
                   return (
                     <div
@@ -82,7 +71,7 @@ export function GameweekResults({ fixtures }: GameweekResultsProps) {
                       {/* Score */}
                       <div className="px-3 mx-2 flex-shrink-0 relative group">
                         <div className="bg-purple-900 text-white font-bold text-base w-16 flex items-center justify-center py-1 rounded-md cursor-pointer">
-                          {homeGoals !== null && awayGoals !== null
+                          {homeGoals && awayGoals
                             ? `${homeGoals} - ${awayGoals}`
                             : " v "}
                         </div>

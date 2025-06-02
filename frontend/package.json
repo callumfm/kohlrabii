@@ -5,7 +5,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
-    "generate-client": "openapi-typescript openapi.json --output ./lib/api/schema.ts"
+    "generate-client": "openapi-typescript openapi.json --output ./lib/api/schema.ts && pnpm run build"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

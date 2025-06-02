@@ -40,13 +40,13 @@ const toolTip = ({
         <span
           className={`w-4 text-center ${data.winner === "H" ? "font-medium" : "text-muted-foreground"}`}
         >
-          {data.result?.home_score}
+          {data.home_score}
         </span>
         <span className="text-muted-foreground">v</span>
         <span
           className={`w-4 text-center ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}
         >
-          {data.result?.away_score}
+          {data.away_score}
         </span>
         <span
           className={`w-12 text-left ${data.winner === "A" ? "font-medium" : "text-muted-foreground"}`}
@@ -72,18 +72,22 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
 
   const chartData = fixtureItems.map((fixture) => {
     const wasHome = fixture.home_team.name === team_name
+    const venue = wasHome ? "Home" : "Away"
     const opponentTeam = wasHome ? fixture.away_team : fixture.home_team
 
-    let goalsFor = 0
-    let goalsAgainst = 0
+    const [goalsFor, goalsAgainst] = fixture.result
+      ? [
+          wasHome ? fixture.result.home_score : fixture.result.away_score,
+          wasHome ? fixture.result.away_score : fixture.result.home_score,
+        ]
+      : [0, 0]
 
+    let winner = null
     if (fixture.result) {
-      if (wasHome) {
-        goalsFor = fixture.result.home_score
-        goalsAgainst = fixture.result.away_score
-      } else {
-        goalsFor = fixture.result.away_score
-        goalsAgainst = fixture.result.home_score
+      if (goalsFor > goalsAgainst) {
+        winner = wasHome ? "H" : "A"
+      } else if (goalsFor < goalsAgainst) {
+        winner = wasHome ? "A" : "H"
       }
     }
 
@@ -92,25 +96,14 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
       date: fixture.date,
       opponentId: opponentTeam.id,
       opponentCode: opponentTeam.tricode,
-      wasHome,
+      venue,
       goalsFor,
       goalsAgainst,
-      result: fixture.result,
-      forecast: fixture.forecast,
-      venue: wasHome ? "Home" : "Away",
+      home_score: fixture.result?.home_score,
+      away_score: fixture.result?.away_score,
       home_team: fixture.home_team,
       away_team: fixture.away_team,
-      winner: fixture.result
-        ? goalsFor > goalsAgainst
-          ? wasHome
-            ? "H"
-            : "A"
-          : goalsFor < goalsAgainst
-            ? wasHome
-              ? "A"
-              : "H"
-            : null
-        : null,
+      winner,
     }
   })
 
