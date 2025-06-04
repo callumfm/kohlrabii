@@ -1,14 +1,17 @@
 "use server"
 
-import { type Client, type schemas, unwrap } from "@/lib/api/core"
+import { type Client, unwrap } from "@/lib/api/core"
 import type { operations } from "@/lib/api/schema"
+import type { TFixturePagination } from "@/lib/api/types"
 import { notFound } from "next/navigation"
 import { cache } from "react"
 
+type TParams = operations["fixtures_get_fixtures_query"]["parameters"]["query"]
+
 const _getFixtures = async (
   api: Client,
-  params?: operations["fixtures_get_fixtures_query"]["parameters"]["query"],
-): Promise<schemas["FixtureReadPagination"]> => {
+  params?: TParams,
+): Promise<TFixturePagination> => {
   return unwrap(
     api.GET("/api/v1/fixtures", {
       params: {

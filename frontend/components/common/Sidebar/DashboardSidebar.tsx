@@ -21,8 +21,8 @@ import Link from "next/link"
 const data = {
   navMain: [
     {
-      title: "Fixtures",
-      url: dashboardPath("/fixtures"),
+      title: "Results",
+      url: dashboardPath("/results"),
       icon: Calendar1Icon,
     },
     {

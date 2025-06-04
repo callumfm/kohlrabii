@@ -6,7 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart"
-import type { schemas } from "@/lib/api/core"
+import type { TFixturePagination } from "@/lib/api/types"
 import { CONFIG } from "@/utils/config"
 import React from "react"
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
@@ -59,7 +59,7 @@ const toolTip = ({
 }
 
 interface ResultsChartProps {
-  results: schemas["FixtureReadPagination"]
+  results: TFixturePagination
   team_name: string
 }
 
@@ -67,8 +67,7 @@ export function ResultsChart({ results, team_name }: ResultsChartProps) {
   const [hoveredGameweek, setHoveredGameweek] = React.useState<number | null>(
     null,
   )
-  const fixtureItems =
-    (results as schemas["FixtureReadPagination"])?.items ?? []
+  const fixtureItems = (results as TFixturePagination)?.items ?? []
 
   const chartData = fixtureItems.map((fixture) => {
     const wasHome = fixture.home_team.name === team_name

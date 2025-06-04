@@ -25,7 +25,7 @@ export const useTeams = (parameters: TParams) =>
 
 // export const useTeam = (
 //   parameters: operations["teams_get_team_by_id"]["parameters"]["path"],
-//   initialData?: schemas["TeamRead"],
+//   initialData?: TTeam,
 // ) =>
 //   useQuery({
 //     queryKey: ["teams", parameters],

@@ -1,14 +1,14 @@
 "use server"
 
 import type { operations } from "@/lib/api/schema"
+import type { TTeam } from "@/lib/api/types"
 import { notFound } from "next/navigation"
 import { cache } from "react"
-import { type Client, type schemas, unwrap } from "../lib/api/core"
+import { type Client, unwrap } from "../lib/api/core"
 
-const _getTeam = async (
-  api: Client,
-  params: operations["teams_get_team_by_id"]["parameters"]["path"],
-): Promise<schemas["TeamRead"]> => {
+type TParams = operations["teams_get_team_by_id"]["parameters"]["path"]
+
+const _getTeam = async (api: Client, params: TParams): Promise<TTeam> => {
   return unwrap(
     api.GET("/api/v1/teams/{team_id}", {
       params: {

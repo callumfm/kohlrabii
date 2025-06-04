@@ -1,4 +1,5 @@
-import type { components, operations } from "./schema"
+import type { schemas } from "@/lib/api/core"
+import type { operations } from "./schema"
 
 export type TPagination = {
   total: number
@@ -13,4 +14,6 @@ export type TSeason = NonNullable<
   >["season"]
 >
 
-export type TTeam = components["schemas"]["TeamRead"]
+export type TTeam = schemas["TeamRead"]
+export type TFixture = schemas["FixtureRead"]
+export type TFixturePagination = schemas["FixtureReadPagination"]

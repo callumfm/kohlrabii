@@ -1,17 +1,16 @@
 "use client"
 
-import type { schemas } from "@/lib/api/core"
+import type { TFixturePagination, TTeam } from "@/lib/api/types"
 import { usePageTitle } from "@/providers/PageTitle"
 import { useEffect } from "react"
-// import { FixturesChart } from "./components/FixturesChart"
 import { ResultsChart } from "./components/ResultsChart"
 import { StrengthCard } from "./components/StrengthCard"
 import { TeamProfileCard } from "./components/TeamProfileCard"
 import { TopPlayersCard } from "./components/TopPlayersCard"
 
 interface ClientPageProps {
-  team: schemas["TeamRead"]
-  fixtures: schemas["FixtureReadPagination"]
+  team: TTeam
+  fixtures: TFixturePagination
 }
 
 export function ClientPage({ team, fixtures }: ClientPageProps) {
@@ -44,9 +43,9 @@ export function ClientPage({ team, fixtures }: ClientPageProps) {
           <div className="row-span-1 h-full">
             <ResultsChart team_name={team.name} results={fixtures} />
           </div>
-          <div className="row-span-1 h-full">
-            {/* <FixturesChart team_name={team.name} fixtures={fixtures} /> */}
-          </div>
+          {/* <div className="row-span-1 h-full">
+            <FixturesChart team_name={team.name} fixtures={fixtures} />
+          </div> */}
         </div>
         <div className="col-span-1 h-full">
           <TopPlayersCard />
